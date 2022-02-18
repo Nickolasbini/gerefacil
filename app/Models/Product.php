@@ -16,7 +16,36 @@ class Product extends Model {
      */
     protected $fillable = [
         'name',
-        'email',
-        'password',
+        'category_id',
+        'productDetails',
+        'price',
+        'quantity',
+        'user_id'
     ];
+
+    // setters
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+    public function setCategory($categoryId)
+    {
+        $this->category_id = $categoryId;
+    }
+    public function setProductDetails($productDetails)
+    {
+        $this->productDetails = $productDetails;
+    }
+    public function setPrice($price)
+    {
+        $this->price = $price;
+    }
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+    }
+    public function setUser($userId)
+    {
+        $this->user_id = $userId;
+    }
 }

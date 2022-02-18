@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Comments extends Model {
+class Coments extends Model {
 
 	protected $table = 'comments';
 	public $timestamps = true;

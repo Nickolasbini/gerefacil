@@ -31,5 +31,6 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
         foreach($userObject->getAttributes() as $keyName => $data){
             $this->session->put('authUser-' . $keyName, $data);
         }
+        $this->session->put('userLanguage', env('USER_LANGUAGE'));
     }
 }

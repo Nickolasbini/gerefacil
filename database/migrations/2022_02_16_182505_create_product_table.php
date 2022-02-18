@@ -19,11 +19,11 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name', 200);
-			$table->foreignIdFor(Category::class);
+			$table->integer('category_id')->unsigned()->nullable();
             $table->json('productDetails');
             $table->decimal('price', 15,2);
 			$table->integer('quantity')->default('0');
-            $table->foreignIdFor(User::class);
+            $table->integer('user_id')->unsigned()->nullable();
         });
     }
 

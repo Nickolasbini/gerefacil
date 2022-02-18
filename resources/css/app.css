@@ -1,3 +1,11 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+.perfect-rounded{
+    border-radius: 100%;    
+}
+.logo-img{
+    width: 2.25rem;
+    height: 2.25rem;
+}
