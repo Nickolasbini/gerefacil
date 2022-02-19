@@ -50,26 +50,10 @@ class ProductController extends Controller
                 'message' => ucfirst(translate('category is required'))
             ]);
         }
-
-        /*if($id){
-            $result = Product::updateOrCreate(
-                ['id' => $id],
-                ['name' => $name, 'categoryId' => $categoryId, 'productDetails' => $productDetails, 'price' => $price, 'quantity' => $quantity, 'user_id' => $this->session->get('authUser-id')]
-            );
-        }else{
-            $result = Product::create(
-                ['name' => $name, 'categoryId' => $categoryId, 'productDetails' => $productDetails, 'price' => $price, 'quantity' => $quantity, 'user_id' => $this->session->get('authUser-id')]
-            );
-        }*/
-
-        $productObj->setName($name);
-        $productObj->setCategory($categoryObj->id);
-        $productObj->setProductDetails($productDetails);
-        $productObj->setPrice(floatval($price));
-        $productObj->setQuantity($quantity);
-        $productObj->setUser($this->session->get('authUser-id'));
-        dd($productObj->save());
-        $result = $productObj->save();
+        $result = Product::updateOrCreate(
+            ['id' => $id],
+            ['name' => $name, 'category_id' => $categoryId, 'productDetails' => $productDetails, 'price' => $price, 'quantity' => $quantity, 'user_id' => $this->session->get('authUser-id')]
+        );
         if(!$result){
             return json_encode([
                 'success' => false,

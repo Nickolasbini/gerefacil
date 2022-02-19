@@ -5,7 +5,7 @@ function translate($text = null)
 {
     if(!$text)
         return;
-    $userLanguage = session()->get('userLanguage');
+    $userLanguage = (session()->get('userLanguage') ? session()->get('userLanguage') : env('USER_LANGUAGE'));
     $pathToTranslations = storage_path('app/translations/systemTranslations.json');
     if(!file_exists($pathToTranslations)){
         mkdir(storage_path('app/translations'));
@@ -21,9 +21,8 @@ function translate($text = null)
         file_put_contents($pathToTranslations, json_encode($systemTranslations));
         $translatedText = $text;
     }else{
-  //      $translatedText = (empty($systemTranslations[$text][$userLanguage]) ? $systemTranslations[$text][$userLanguage] : $systemTranslations[$text]['en']);
+        $translatedText = ($systemTranslations[$text][$userLanguage] != '' ? $systemTranslations[$text][$userLanguage] : $systemTranslations[$text]['en']);
     }
-    $translatedText = $text;
     return $translatedText;
 }
 ?>

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('name', 200);
 			$table->integer('category_id')->unsigned()->nullable();
-            $table->json('productDetails');
+            $table->text('productDetails');
             $table->decimal('price', 15,2);
 			$table->integer('quantity')->default('0');
             $table->integer('user_id')->unsigned()->nullable();
