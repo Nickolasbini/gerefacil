@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\User;
 
 return new class extends Migration
 {
@@ -19,7 +18,8 @@ return new class extends Migration
             $table->timestamps();
             $table->boolean('isPayed');
             $table->dateTime('dateOfPayment');
-            $table->foreignIdFor(User::class);
+            $table->bigInteger('user_id')->unsigned()->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->integer('numberOfUnits')->default('0');
             $table->decimal('shippingPrice', 15,2)->default('0');
         });

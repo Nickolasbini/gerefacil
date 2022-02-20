@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 
 class CategoryController extends Controller 
 {
@@ -15,7 +16,35 @@ class CategoryController extends Controller
     */
     public function save()
     {
-
+        $id     = $this->getParameter('id');
+        $name   = $this->getParameter('name');
+        $categoryObj = new Category();
+        if($id){
+            $category = $categoryObj->find($id);
+            if(!$category){
+                return json_encode([
+                    'success' => false,
+                    'message' => ucfirst(translate('invalid'))
+                ]);
+            }
+            $categoryObj = $category;
+        }
+        $result = Category::updateOrCreate(
+            ['id' => $id],
+            ['name' => $name, 'user_id' => $this->getLoggedUserId()]
+        );
+        if(!$result){
+            return json_encode([
+                'success' => false,
+                'message' => ucfirst(translate('an error occured, try again later'))
+            ]);
+        }
+        $message = ($id ? ucfirst(translate('category updated')) : ucfirst(translate('category created')));
+        return json_encode([
+            'success' => true,
+            'message' => $message,
+            'id'      => $categoryObj->id
+        ]);
     }
       
     /**

@@ -43,6 +43,14 @@ class ProductController extends Controller
                     'message' => ucfirst(translate('category is invalid'))
                 ]);
             }
+            // verify if user_id is the same as mine or if it's from the superAdmin User
+            $userObj = $category->getUser();
+            if($userObj->id != $this->getLoggedUserId() && !$userObj->isSuperAdmin()){
+                return json_encode([
+                    'success' => false,
+                    'message' => ucfirst(translate('category can not be user'))
+                ]);
+            }
             $categoryObj = $category;
         }else{
             return json_encode([
@@ -52,7 +60,7 @@ class ProductController extends Controller
         }
         $result = Product::updateOrCreate(
             ['id' => $id],
-            ['name' => $name, 'category_id' => $categoryId, 'productDetails' => $productDetails, 'price' => $price, 'quantity' => $quantity, 'user_id' => $this->session->get('authUser-id')]
+            ['name' => $name, 'category_id' => $categoryId, 'productDetails' => $productDetails, 'price' => $price, 'quantity' => $quantity, 'user_id' => $this->getLoggedUserId()]
         );
         if(!$result){
             return json_encode([

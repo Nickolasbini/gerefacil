@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\User;
 
 return new class extends Migration
 {
@@ -18,7 +17,8 @@ return new class extends Migration
             $table->id();
             $table->boolean('superAdmin')->nullable();
             $table->integer('role')->nullable();
-            $table->foreignIdFor(User::class);
+            $table->bigInteger('user_id')->unsigned()->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

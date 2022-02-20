@@ -3,8 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\User;
-use App\Models\Product;
 
 return new class extends Migration
 {
@@ -19,8 +17,10 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('commentText', 200);
-            $table->foreignIdFor(Product::class);
-            $table->foreignIdFor(User::class);
+            $table->bigInteger('product_id')->unsigned()->nullable();
+            $table->foreign('product_id')->references('id')->on('product');
+            $table->bigInteger('user_id')->unsigned()->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

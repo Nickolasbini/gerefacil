@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Models\User;
+use Illuminate\Support\Facades\Schema;
 
 class CreateCategoryTable extends Migration {
 
@@ -12,7 +12,8 @@ class CreateCategoryTable extends Migration {
 			$table->increments('id');
 			$table->timestamps();
 			$table->string('name', 200)->unique();
-			$table->foreignIdFor(User::class);
+			$table->bigInteger('user_id')->unsigned()->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
 		});
 	}
 

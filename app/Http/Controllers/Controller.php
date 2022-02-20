@@ -17,6 +17,24 @@ class Controller extends BaseController
         $this->session = session();
     }
 
+    function isLogged()
+    {
+        if($this->session->get('authUser-id')){
+            return true;
+        }else{
+            return null;
+        }
+    }
+
+    function getLoggedUserId()
+    {
+        if($this->session->get('authUser-id')){
+            return $this->session->get('authUser-id');
+        }else{
+            return null;
+        }
+    }
+
     function getSessionData()
     {
         return $this->request->session()->all();

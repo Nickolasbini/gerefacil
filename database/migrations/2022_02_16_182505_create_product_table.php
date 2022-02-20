@@ -3,8 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\User;
-use App\Models\Category;
 
 return new class extends Migration
 {
@@ -20,10 +18,12 @@ return new class extends Migration
             $table->timestamps();
             $table->string('name', 200);
 			$table->integer('category_id')->unsigned()->nullable();
+            $table->foreign('category_id')->references('id')->on('category');
             $table->text('productDetails');
             $table->decimal('price', 15,2);
 			$table->integer('quantity')->default('0');
-            $table->integer('user_id')->unsigned()->nullable();
+            $table->bigInteger('user_id')->unsigned()->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
