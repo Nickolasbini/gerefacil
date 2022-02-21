@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use PhpParser\Node\Expr\FuncCall;
 
 class AuthenticatedUserActions extends \App\Http\Controllers\Controller
 {
@@ -17,6 +18,9 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
     public function handle(Request $request, Closure $next)
     {
         $this->insertAuthenticatedUserDataToSession($request->user());
+
+        $this->separateUsers($request);
+
         return $next($request);
     }
 
@@ -29,8 +33,35 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
     public function insertAuthenticatedUserDataToSession($userObject)
     {
         foreach($userObject->getAttributes() as $keyName => $data){
+            if($keyName == 'is_admin'){
+                $data = ($data == 1 ? true : false);
+            }
             $this->session->put('authUser-' . $keyName, $data);
         }
         $this->session->put('userLanguage', env('USER_LANGUAGE'));
+    }
+
+    /**
+     * Responsible by allowing ADMIN only to routes
+     * @return <nill>
+     */
+    public Function separateUsers($request)
+    {
+        $exceptionsForNonAdmins = [
+            '/user/profile',
+            'logout'
+        ];
+        $requestURI = $request->getRequestUri();
+        if($this->isAdmin()){
+            return;
+        }
+        if($requestURI == '/dashboard'){
+            exit(redirect('/user/profile'));
+        }
+        // check the exception
+        if(in_array($requestURI, $exceptionsForNonAdmins)){
+            return;
+        }
+        exit(redirect('/user/profile'));
     }
 }

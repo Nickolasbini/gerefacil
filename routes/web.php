@@ -21,7 +21,7 @@ use App\Http\Controllers\UserController;
 // normal routes
 Route::middleware(['master'])->group(function(){ 
     Route::get('/', function () {
-        return view('welcome');
+        return view('home');
     });
     Route::post('user/validatecpf', [UserController::class, 'validateCPF']);
     Route::post('user/getcepdata', [UserController::class, 'getCEPData']);

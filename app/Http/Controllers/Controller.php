@@ -17,6 +17,15 @@ class Controller extends BaseController
         $this->session = session();
     }
 
+    function isAdmin()
+    {
+        if($this->session->get('authUser-is_admin')){
+            return true;
+        }else{
+            return null;
+        }
+    }
+
     function isLogged()
     {
         if($this->session->get('authUser-id')){
