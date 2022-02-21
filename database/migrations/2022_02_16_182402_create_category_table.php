@@ -11,7 +11,7 @@ class CreateCategoryTable extends Migration {
 		Schema::create('category', function(Blueprint $table) {
 			$table->increments('id');
 			$table->timestamps();
-			$table->string('name', 200)->unique();
+			$table->string('name', 200);
 			$table->bigInteger('user_id')->unsigned()->nullable();
             $table->foreign('user_id')->references('id')->on('users');
 		});

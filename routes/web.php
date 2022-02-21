@@ -6,6 +6,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,3 +66,5 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
     // products routes
     Route::get('report/save', [ReportController::class, 'save']);
 });
+
+Route::get('category/list', [CategoryController::class, 'list']);
