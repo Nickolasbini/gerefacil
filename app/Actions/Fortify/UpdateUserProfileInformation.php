@@ -28,13 +28,22 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             $user->updateProfilePhoto($input['photo']);
         }
 
+
+        if($input['dateOfBirth']){
+            $input['dateOfBirth'] = new \DateTime($input['dateOfBirth']);
+        }
+
         if ($input['email'] !== $user->email &&
             $user instanceof MustVerifyEmail) {
             $this->updateVerifiedUser($user, $input);
         } else {
             $user->forceFill([
-                'name' => $input['name'],
-                'email' => $input['email'],
+                'name'        => $input['name'],
+                'email'       => $input['email'],
+                'cpf'         => $input['cpf'],
+                'cep'         => $input['cep'],
+                'address'     => $input['address'],
+                'dateOfBirth' => $input['dateOfBirth']
             ])->save();
         }
     }
@@ -49,9 +58,13 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     protected function updateVerifiedUser($user, array $input)
     {
         $user->forceFill([
-            'name' => $input['name'],
-            'email' => $input['email'],
+            'name'              => $input['name'],
+            'email'             => $input['email'],
             'email_verified_at' => null,
+            'cpf'               => $input['cpf'],
+            'cep'               => $input['cep'],
+            'address'           => $input['address'],
+            'dateOfBirth'       => $input['dateOfBirth']
         ])->save();
 
         $user->sendEmailVerificationNotification();

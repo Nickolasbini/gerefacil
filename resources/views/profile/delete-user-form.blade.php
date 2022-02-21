@@ -1,6 +1,6 @@
 <x-jet-action-section>
     <x-slot name="title">
-        {{ __('Delete Account') }}
+        <?= ucfirst(translate('delete account')) ?>
     </x-slot>
 
     <x-slot name="description">

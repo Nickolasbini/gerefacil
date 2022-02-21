@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,8 +18,14 @@ use App\Http\Controllers\ReportController;
 |
 */
 
-Route::middleware(['master'])->get('/', function () {
-    return view('welcome');
+// normal routes
+Route::middleware(['master'])->group(function(){ 
+    Route::get('/', function () {
+        return view('welcome');
+    });
+    Route::post('user/validatecpf', [UserController::class, 'validateCPF']);
+    Route::post('user/getcepdata', [UserController::class, 'getCEPData']);
+    Route::post('user/checkserial', [UserController::class, 'checkSerial']);
 });
 
 // sadly I can not create a group for some reason (maybe cause of jetstream)
@@ -43,12 +50,14 @@ Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActio
 })->name('dashboard/report');
 
 Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->group(function () {
+    Route::get('getprofilephoto', [UserController::class, 'getProfilePhoto']);
+
     // products routes
     
     Route::post('product/remove', [ProductController::class, 'save']);
 
     // products routes
-    Route::get('sale/save', [SalesController::class, 'save']);
+    Route::get('sale/save', [SaleController::class, 'save']);
 
     // products routes
     Route::get('message/save', [MessageController::class, 'save']);
@@ -56,5 +65,3 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
     // products routes
     Route::get('report/save', [ReportController::class, 'save']);
 });
-
-Route::get('product/save', [ProductController::class, 'save']);

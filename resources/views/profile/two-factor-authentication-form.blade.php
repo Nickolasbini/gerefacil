@@ -1,6 +1,6 @@
 <x-jet-action-section>
     <x-slot name="title">
-        {{ __('Two Factor Authentication') }}
+        <?= ucfirst(translate('two factor authentication')) ?>
     </x-slot>
 
     <x-slot name="description">

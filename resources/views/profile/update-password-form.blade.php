@@ -1,10 +1,10 @@
 <x-jet-form-section submit="updatePassword">
     <x-slot name="title">
-        {{ __('Update Password') }}
+        <?= ucfirst(translate('update password')) ?>
     </x-slot>
 
     <x-slot name="description">
-        {{ __('Ensure your account is using a long, random password to stay secure.') }}
+        <?= ucfirst(translate('ensure your account is using a long, random password to stay secure')) . '.' ?>
     </x-slot>
 
     <x-slot name="form">
@@ -29,11 +29,11 @@
 
     <x-slot name="actions">
         <x-jet-action-message class="mr-3" on="saved">
-            {{ __('Saved.') }}
+            <?= ucfirst(translate('saved')) . '.' ?>
         </x-jet-action-message>
 
         <x-jet-button>
-            {{ __('Save') }}
+            <?= ucfirst(translate('save')) ?>
         </x-jet-button>
     </x-slot>
 </x-jet-form-section>
