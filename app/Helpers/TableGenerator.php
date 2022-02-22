@@ -1,7 +1,7 @@
 <?php
 namespace App\Helpers;
 
-class Table
+class TableGenerator
 {
     /**
      * action responsible by generating Table in HTML from sent elements as indexed array
