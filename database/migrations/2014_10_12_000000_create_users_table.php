@@ -28,7 +28,7 @@ return new class extends Migration
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->tinyInteger('is_admin')->nullable();
-            $table->string('licence_number', 200)->nullable();
+            $table->string('license_number', 200)->nullable();
             $table->tinyInteger('master_admin')->nullable();
             $table->timestamps();
         });

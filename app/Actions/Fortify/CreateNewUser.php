@@ -47,7 +47,7 @@ class CreateNewUser implements CreatesNewUsers
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
             'is_admin' => $input['is_admin'],
-            'licence_number' => $input['serial']
+            'license_number' => $input['serial']
         ]);
     }
 }

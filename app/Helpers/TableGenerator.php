@@ -8,14 +8,18 @@ class TableGenerator
      * @author  NAB - 20200904  
      * @version 1.0 - 20200904 - initial release
      * @version 2.0 - 20200909 - html 'data-id' element and action buttons added
+     * @version 3.0 - 20220223 - adding url to action buttons (edit and delete)
      * @params  $elements        <indexed array>  of elements - mandatory
      * @params  $columnsToHide   <array>  'index name' to hide by adding 'disabled' class. 
      *                                      'action'     to hide EDIT & DELETE buttons
-        *                                   'filter'     to hide Filter
+     *                                      'filter'     to hide Filter
      *                                      'inUse'      to add "disabled" class to Delete button when element can't be deleted
      * 
-     * @params  $parameters      <indexed array>  keys: 'sersd' To add a button in empty value with '-MISSING-' text and a 'empty' class to TD. Default is ' - '
-     *                                                     'cssClass'        Name for the class of table. Default is 'pnhTable'
+     * @params  $parameters      <indexed array>  keys: 'noDataElement' To add a button in empty value with '-MISSING-' text and a 'empty' class to TD. Default is ' - '
+     *                                                  'cssClass'      Name for the class of table. Default is 'pnhTable'
+     *                                                  'editUrl'       to add a link to the A tag edit
+     *                                                  'removeUrl'     to add a link to the A tag remove
+     *                                                  'translations'  to translate the key of a table
      * 
      * @returns $html            <string>         generated table in HTML
      */
@@ -40,7 +44,11 @@ class TableGenerator
         $noDataElement = false;
         if(!empty($parameters['noDataElement']))
             $noDataElement = true;
-        
+        $editUrl   = (!empty($parameters['editUrl'])   ? $parameters['editUrl']   : null);
+        $removeUrl = (!empty($parameters['removeUrl']) ? $parameters['removeUrl'] : null);
+        $translationsArray = (!empty($parameters['translations']) ? $parameters['translations'] : null);
+
+
         // instantiating $html return variable
         $html = '';
         
@@ -102,6 +110,11 @@ class TableGenerator
         
         // Generating table head elements
         foreach($keys as $key){
+            if($translationsArray){
+                if(array_key_exists($key, $translationsArray)){
+                    $key = $translationsArray[$key];
+                }
+            }
             if(!is_null($columnsToHide) && count($columnsToHide) > 0){
                 // loop throught $columnsToHide in order to search for matches
                 while($position['position'] < count($columnsToHide)){
@@ -201,9 +214,9 @@ class TableGenerator
                         }
                     }else{
                         $html .= '<td class="'.$cssClass.' actions">'
-                              .  '<a class="edit-button">Edit</a>';
+                              .  '<a class="edit-button" '. ($editUrl ? 'href="' . \App\Helpers\Functions::viewLink($editUrl) . '"' : '') .'>Edit</a>';
                         if(!$hideDelete){
-                            $html .= '<a class="delete-button">Delete</a></td>';
+                            $html .= '<a class="delete-button" '. ($removeUrl ? 'href="' . \App\Helpers\Functions::viewLink($removeUrl) . '"' : '') .'">Delete</a></td>';
                         }else{
                             $html .= '<a class="delete-button disabled">Delete</a></td>';
                         }
@@ -261,5 +274,5 @@ class TableGenerator
         $html .= '</tr>';
         
         return $html;
-    } 
+    }
 }

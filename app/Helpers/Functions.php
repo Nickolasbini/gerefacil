@@ -22,5 +22,49 @@ class Functions
     public static function getCookie($cookieName, Request $request){
         $value = $request->cookie($cookieName);
         return $value;
-     }
+    }
+
+    // return url for view accordingly to enviroment at env
+    public static function viewLink($path)
+    {
+        try {
+            if(env('APP_ENV') == 'local'){
+                return url($path);
+            }else{
+                return secure_url($path);
+            }
+        } catch (\Throwable $th) {
+            abort(404);
+        }
+    }
+
+    // order sent array as the $orderBy array sent
+    // obs: works with indexed arrays only
+    public static function orderArray($arrayToOrder, $orderBy)
+    {
+        $orderedArray = [];
+        foreach($orderBy as $orderItem){
+            $orderedArray[$orderItem] = $arrayToOrder[$orderItem];
+        }
+        return $orderedArray;
+    }
+
+    // return all categories avaliable for this user
+    // $keyAttribute for key name and $attributeName for value attribue
+    public static function getIndexedArray($keyAttribute = 'id', $attributeName = 'name', $objArray = [])
+    {
+        $indexedArray = [];
+        foreach($objArray as $obj){
+            $indexedArray[$obj->{$keyAttribute}] = $obj->{$attributeName};
+        }
+        return $indexedArray;
+    }
+
+    public static function formatDate($string, $format = null)
+    {
+        dd($string);
+        $format = ($format ? $format : env('DATE_FORMAT'));
+        $date = new \DateTime($string);
+        return $date->format($format);
+    }
 }

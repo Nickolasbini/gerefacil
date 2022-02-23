@@ -70,15 +70,6 @@ class CategoryController extends Controller
                 'content' => $elements
             ]);
         }
-        $paginator = new Paginator();
-        $paginator->pager($total, $limit, $page);
-        $categories = Category::where('id', '>', '0')->skip($paginator->offset())->take($paginator->limit())->get()->toArray();
-        foreach($categories as $category){
-            $elements[] = [
-                'id' => $category->getId()
-            ];
-        }
-        dd($elements);
 
 
     }

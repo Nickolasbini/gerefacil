@@ -178,7 +178,6 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
-
     ],
 
     /*
@@ -193,7 +192,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        'AppHelper' => App\Helpers\Functions::class
+        
     ])->toArray(),
 
 ];

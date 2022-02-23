@@ -16,10 +16,12 @@ class Master extends \App\Http\Controllers\Controller
      */
     public function handle(Request $request, Closure $next)
     {
+        $this->setMasterAdminData();
         $this->getUserLanguageToSession();
         return $next($request);
     }
 
+    // tries to capture user language to set to session and a cookie
     public function getUserLanguageToSession()
     {
         $possible = ['pt', 'en', 'es'];
@@ -59,5 +61,27 @@ class Master extends \App\Http\Controllers\Controller
         }
         $this->session->put('userLanguage', $languageOfUser);
         return $languageOfUser;
+    }
+
+    // gather masterAdmin data to set some attributes to session, also creates a master_admin
+    public function setMasterAdminData()
+    {
+        if(session()->get('master_admin_id')){
+            return;
+        }
+        $user = \App\Models\User::where('master_admin', 1)->get();
+        if($user->count() < 1){
+            $user = \App\Models\User::create(['name' => 'masterAdmin', 'email' => 'gerefacil@gmail.com', 'password' => hash('sha256', env('MAIL_PASSWORD')), 'is_admin' => 1, 'master_admin' => 1]);
+        }else{
+            $user = $user[0];
+        }
+        $userData = $user->toArray();
+        $doNotSave = ['email', 'password', 'email_verified_at', 'current_team_id', 'profile_photo_path', 'cpf', 'address', 'cep', 'sex', 'dateOfBirth', 'license_number', 'created_at', 'updated_at'];
+        $session = session();
+        foreach($userData as $attributeName => $attribute){
+            if(!in_array($attributeName, $doNotSave)){
+                $session->put('masterAdmin-'.$attributeName, $attribute);
+            }
+        }
     }
 }

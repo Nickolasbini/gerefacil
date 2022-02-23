@@ -37,11 +37,7 @@ class Controller extends BaseController
 
     function getLoggedUserId()
     {
-        if($this->session->get('authUser-id')){
-            return $this->session->get('authUser-id');
-        }else{
-            return null;
-        }
+        return $this->session->get('authUser-id');
     }
 
     function getSessionData()
@@ -65,5 +61,27 @@ class Controller extends BaseController
     function setParameter($parameterName, $defaultValue = null)
     {
         $this->request->merge([$parameterName => $defaultValue]);
+    }
+
+    // returns the master admin
+    function getMasterAdmin()
+    {
+        return \App\Models\User::where('master_admin', 1);
+    }
+
+    function getMasterAdminId()
+    {
+        return $this->session->get('master_admin-id');
+    }
+
+    // return all categories avaliable for this user
+    // $keyAttribute for key name and $attributeName for value attribue
+    public function getIndexedArray($keyAttribute = 'id', $attributeName = 'name', $objArray = [])
+    {
+        $indexedArray = [];
+        foreach($objArray as $obj){
+            $indexedArray[$obj->{$keyAttribute}] = $obj->{$attributeName};
+        }
+        return $indexedArray;
     }
 }

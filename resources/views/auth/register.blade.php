@@ -30,12 +30,12 @@
                 <x-jet-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
             </div>
 
-            <div class="mt-4 hide-until-email-is-informed checkbox-of-licence">
-                <label><?= ucfirst(translate("i have a licence number")); ?></label>
-                <input id="is_admin" type="checkbox" name="is_admin" value="0" onclick="showLicenceField()">
+            <div class="mt-4 hide-until-email-is-informed checkbox-of-license">
+                <label><?= ucfirst(translate("i have a licende number")); ?></label>
+                <input id="is_admin" type="checkbox" name="is_admin" value="0" onclick="showLicenseField()">
             </div>
 
-            <div class="mt-4 hide-until-email-is-informed activeted-licence" style="display:none;">
+            <div class="mt-4 hide-until-email-is-informed activeted-license" style="display:none;">
                 <label><?= ucfirst(translate("my license")); ?>:</label>
             </div>
 
@@ -89,10 +89,10 @@
 
     document.addEventListener("DOMContentLoaded", function(event) {
         document.getElementById('is_admin').checked = false;
-        showLicenceField();
+        showLicenseField();
     });
 
-    function showLicenceField(){
+    function showLicenseField(){
         var isSelected = document.getElementById('is_admin').checked;
         if(isSelected == true){
             document.getElementById('serialNumberDiv').style = '';
@@ -131,9 +131,9 @@
                     $('#validate-serial').remove();
                     $('#serial').css('pointer-events', 'none');
                     $('#serialNumberDiv').hide();
-                    $('.checkbox-of-licence').remove();
-                    $('.activeted-licence').append(': ' + $('#serial').val());
-                    $('.activeted-licence').show();
+                    $('.checkbox-of-license').remove();
+                    $('.activeted-license').append(': ' + $('#serial').val());
+                    $('.activeted-license').show();
                 }
             }
         });
