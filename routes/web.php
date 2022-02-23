@@ -54,8 +54,8 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
     Route::get('getprofilephoto', [UserController::class, 'getProfilePhoto']);
 
     // products routes
-    
-    Route::post('product/remove', [ProductController::class, 'save']);
+    Route::get('product/save/{productId?}', [ProductController::class, 'create']);
+    Route::post('product/save', [ProductController::class, 'save']);
 
     // products routes
     Route::get('sale/save', [SaleController::class, 'save']);
