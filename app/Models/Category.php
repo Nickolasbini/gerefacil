@@ -28,7 +28,7 @@ class Category extends Model {
     // return all categories avaliable for this user
     public function getMyCategories()
     {
-        $allCategories = Category::where('user_id', session()->get('authUser-id'))->orWhere('user_id', session()->get('master_admin-id'))->get();
+        $allCategories = Category::where('user_id', session()->get('authUser-id'))->orWhere('user_id', session()->get('masterAdmin-id'))->get();
         return $allCategories;
     }
 }

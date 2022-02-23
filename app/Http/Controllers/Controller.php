@@ -71,7 +71,7 @@ class Controller extends BaseController
 
     function getMasterAdminId()
     {
-        return $this->session->get('master_admin-id');
+        return $this->session->get('masterAdmin-id');
     }
 
     // return all categories avaliable for this user

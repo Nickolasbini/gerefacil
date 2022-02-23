@@ -62,9 +62,8 @@ class Functions
 
     public static function formatDate($string, $format = null)
     {
-        dd($string);
         $format = ($format ? $format : env('DATE_FORMAT'));
-        $date = new \DateTime($string);
+        $date = new \DateTime((string)$string);
         return $date->format($format);
     }
 }

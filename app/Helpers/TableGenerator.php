@@ -214,9 +214,9 @@ class TableGenerator
                         }
                     }else{
                         $html .= '<td class="'.$cssClass.' actions">'
-                              .  '<a class="edit-button" '. ($editUrl ? 'href="' . \App\Helpers\Functions::viewLink($editUrl) . '"' : '') .'>Edit</a>';
+                              .  '<a class="edit-button" '. ($editUrl ? 'href="' . \App\Helpers\Functions::viewLink($editUrl) . '/' . $dataElementIds[$position['dataId']] . '"' : '') .'>Edit</a>';
                         if(!$hideDelete){
-                            $html .= '<a class="delete-button" '. ($removeUrl ? 'href="' . \App\Helpers\Functions::viewLink($removeUrl) . '"' : '') .'">Delete</a></td>';
+                            $html .= '<a class="delete-button" '. ($removeUrl ? 'href="' . \App\Helpers\Functions::viewLink($removeUrl) . '/' . $dataElementIds[$position['dataId']] . '"' : '') .'">Delete</a></td>';
                         }else{
                             $html .= '<a class="delete-button disabled">Delete</a></td>';
                         }

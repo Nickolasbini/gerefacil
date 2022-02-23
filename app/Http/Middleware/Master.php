@@ -66,7 +66,7 @@ class Master extends \App\Http\Controllers\Controller
     // gather masterAdmin data to set some attributes to session, also creates a master_admin
     public function setMasterAdminData()
     {
-        if(session()->get('master_admin_id')){
+        if(session()->get('masterAdmin-id')){
             return;
         }
         $user = \App\Models\User::where('master_admin', 1)->get();
