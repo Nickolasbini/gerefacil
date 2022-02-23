@@ -22,10 +22,10 @@ class Mail
 		$this->mail->SMTPSecure = 'tls';
 		$this->mail->CharSet = 'utf-8';
 		// Server and Email info
-		$this->mail->Host = MAIL_CONFIGURATION['host'];
-		$this->mail->Port = MAIL_CONFIGURATION['port'];
-		$this->mail->Username = MAIL_CONFIGURATION['user'];
-		$this->mail->Password = MAIL_CONFIGURATION['passwd'];
+		$this->mail->Host = env('MAIL_HOST');
+		$this->mail->Port = env('MAIL_PORT');
+		$this->mail->Username = env('MAIL_USERNAME');
+		$this->mail->Password = env('MAIL_PASSWORD');
 		$this->mail->addCustomHeader('Importance', 'high');
 	}
 
@@ -51,7 +51,7 @@ class Mail
 	public function sendMail($toEmail = [], $subject = '', $message = '', $attachments = [], $embeddedImgs = [])
 	{
 		// Sender
-		$this->mail->setFrom(MAIL_CONFIGURATION['fromMail'], MAIL_CONFIGURATION['fromName']);
+		$this->mail->setFrom(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 		// Receiver
 		if(is_array($toEmail)){
 			foreach($toEmail as $email){
@@ -71,7 +71,7 @@ class Mail
 		$this->mail->msgHTML($message);
 
 		// Sender default message
-		$this->mail->AltBody = "de: ".MAIL_CONFIGURATION['AltBody'];
+		$this->mail->AltBody = "de: ".env('ALT_BODY');
 
 		// Adding attachments
 		if(!empty($attachments)){

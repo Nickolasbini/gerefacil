@@ -147,4 +147,25 @@ class ProductController extends Controller
     {
         
     }
+
+    /**
+     * Returns the create view 
+     * @return view
+    */
+    public function create()
+    {
+        $productId = $this->getParameter('productId');
+        $productObj = null;
+        if($productId){
+            $product = Product::find($productId);
+            if($product){
+                $productObj = $product;
+            }
+        }
+        $this->session->put('authUser-id', 1);
+        $category = new Category();
+        $categoryNamesAndIds = $category->getAll(true);
+        // get also all the categories of this user and the default ones and up it to view, there, select the one that belongs to this user if this is an update
+        return view('dashboard/product_views/create_product')->with(['product' => $productObj, 'category' => $categoryNamesAndIds]);
+    }
 }
