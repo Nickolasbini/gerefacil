@@ -6,6 +6,7 @@ function translate($text = null)
     if(!$text)
         return;
     $userLanguage = (session()->get('userLanguage') ? session()->get('userLanguage') : env('USER_LANGUAGE'));
+    $userLanguage = ($userLanguage ? $userLanguage : 'pt');
     $pathToTranslations = storage_path('app/translations/systemTranslations.json');
     if(!file_exists($pathToTranslations)){
         mkdir(storage_path('app/translations'));

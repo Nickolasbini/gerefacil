@@ -62,6 +62,11 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
+    public function getCategories()
+    {
+        return $this->hasMany('App\Models\Category', 'id_user');
+    }
+
     const SEX_VALUES = ['M','F','U'];
 
     /**

@@ -7,4 +7,6 @@
         </h2>
     </x-slot>
 
+    @include('dashboard/view_message')
+
 </x-app-layout>

@@ -25,11 +25,15 @@ class Functions
     }
 
     // return url for view accordingly to enviroment at env
-    public static function viewLink($path)
+    public static function viewLink($path, $ignoreException = false)
     {
+        // when route workds only like this, maybe because there are two routes with same name but one is GET and other is POST
+        $exceptions = ['dashboard/product/save'];
+        if(in_array($path, $exceptions) && !$ignoreException)
+            return;
         try {
             if(env('APP_ENV') == 'local'){
-                return url($path);
+               return url($path);
             }else{
                 return secure_url($path);
             }
@@ -65,5 +69,19 @@ class Functions
         $format = ($format ? $format : env('DATE_FORMAT'));
         $date = new \DateTime((string)$string);
         return $date->format($format);
+    }
+
+    // translate $text and set it to session as 'viewMessage'
+    public static function translateAndSetToSession($text, $typeOfMessage = 'success')
+    {
+        session()->put('viewMessage', ucfirst(translate($text)));
+        session()->put('messageType', $typeOfMessage);
+    }
+
+    // translate $text and set it to session as 'viewMessage'
+    public static function emptyTranslateSession()
+    {
+        session()->put('viewMessage', null);
+        session()->put('messageType', null);
     }
 }

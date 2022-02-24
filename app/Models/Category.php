@@ -22,8 +22,13 @@ class Category extends Model {
 
     public function getUser()
     {
-        return User::find($this->user_id);
+        return $this->belongsTo('App\Models\User', 'id_user');
     }
+
+    /*public function getUser()
+    {
+        return User::find($this->user_id);
+    }*/
 
     // return all categories avaliable for this user
     public function getMyCategories()

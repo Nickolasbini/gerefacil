@@ -12,7 +12,13 @@
 </html>
 <script src="{{url('/externalfeatures/jquery.js')}}"></script>
 <script src="{{url('/externalfeatures/bootstrap.js')}}"></script>
-
+<script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    });
+</script>
 <style>
     .small-icon{
         width: 1.5em;

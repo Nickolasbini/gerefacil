@@ -88,6 +88,10 @@ class ProductController extends Controller
     {
         $limit  = $this->getParameter('limit', 10);
         $filter = $this->getParameter('filter');
+        $page   = $this->getParameter('page', 1);
+
+        //$a = Category::find(1);
+        //dd($a->getUser()->name);
 
         $elements = [];
         $total = Product::where('user_id', $this->getLoggedUserId())->orWhere('user_id', null)->count();
@@ -133,8 +137,9 @@ class ProductController extends Controller
         $tableWk = new TableGenerator();
         $htmlOfTable = $tableWk->generateHTMLTable($elements, ['id'], $additionalParameters);
         return view('dashboard/product_home')->with([
-            'content' => $htmlOfTable,
-            'page'    => $products
+            'content'    => $htmlOfTable,
+            'page'       => $products,
+            'pageNumber' => $page
         ]);
     }
 
@@ -150,7 +155,7 @@ class ProductController extends Controller
         if(!$productId){
             return json_encode([
                 'success' => false,
-                'message' => ucfirst(translate('invalid'))
+                'message' => Functions::translateAndSetToSession('invalid')
             ]);
         }
         // check if it isn't in any order, maybe remove there too or simply check there
@@ -158,19 +163,19 @@ class ProductController extends Controller
         if(!$product){
             return json_encode([
                 'success' => false,
-                'message' => ucfirst(translate('invalid'))
+                'message' => Functions::translateAndSetToSession('invalid')
             ]);
         }
         $result = $product->remove();
         if(!$result){
             return json_encode([
                 'success' => false,
-                'message' => ucfirst(translate('an error occured'))
+                'message' => Functions::translateAndSetToSession('an error occured')
             ]);
         }
         return json_encode([
             'success' => true,
-            'message' => ucfirst(translate('removed with success'))
+            'message' => Functions::translateAndSetToSession('removed with success')
         ]);
     }
 

@@ -9,3 +9,41 @@
     width: 2.25rem;
     height: 2.25rem;
 }
+
+/* product CSS */
+.side-bar{
+    border-right: 1px solid #bfb7b791;
+    width: 15%;
+}
+.side-bar-option, .button-wrapper{
+    cursor: pointer;
+}
+.borders-gray{
+    border-top: 1px solid #ccc9c9;
+    border-bottom: 1px solid #ccc9c9;
+}
+.white-hover:hover{
+    background-color: #fff;
+}
+.close{
+    width: 5%;
+    z-index: 5;
+}
+
+@media (max-width: 768px) {
+    .side-bar{
+        width: 30%;
+        text-align: center;
+    }
+    .side-bar img{
+        display: none;
+    }
+    .side-bar-option{
+        padding: unset!important;
+        padding-top: 5%;
+        padding-bottom: 5%;
+    }
+    .close{
+        width: 10%;
+    }
+}

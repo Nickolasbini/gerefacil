@@ -86,4 +86,10 @@ class UserController extends Controller
             'isValid' => ($result ? true : false)
         ]);
     }
+
+    // cleans session ViewMessage
+    public function cleanViewMessage()
+    {
+        return session()->put('viewMessage', null);
+    }
 }

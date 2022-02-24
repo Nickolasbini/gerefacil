@@ -3,5 +3,6 @@
     "/css/app.css": "/css/app.css",
     "/externalfeatures/bootstrap.css": "/externalfeatures/bootstrap.css",
     "/externalfeatures/jquery.js": "/externalfeatures/jquery.js",
-    "/externalfeatures/bootstrap.js": "/externalfeatures/bootstrap.js"
+    "/externalfeatures/bootstrap.js": "/externalfeatures/bootstrap.js",
+    "/externalfeatures/side_bar_functions.js": "/externalfeatures/side_bar_functions.js"
 }

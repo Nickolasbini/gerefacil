@@ -16,16 +16,16 @@
                         <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                             <?= ucfirst(translate('dashboard')) ?>
                         </x-jet-nav-link>
-                        <x-jet-nav-link href="{{ route('dashboard/product') }}" :active="request()->routeIs('dashboard/product')">
+                        <x-jet-nav-link href="{{ route('dashboard.product') }}" :active="request()->routeIs('dashboard.product')">
                             <?= ucfirst(translate('product')) ?>
                         </x-jet-nav-link>
-                        <x-jet-nav-link href="{{ route('dashboard/sale') }}" :active="request()->routeIs('dashboard/sale')">
+                        <x-jet-nav-link href="{{ route('dashboard.sale') }}" :active="request()->routeIs('dashboard.sale')">
                             <?= ucfirst(translate('sale')) ?>
                         </x-jet-nav-link>
-                        <x-jet-nav-link href="{{ route('dashboard/message') }}" :active="request()->routeIs('dashboard/message')">
+                        <x-jet-nav-link href="{{ route('dashboard.message') }}" :active="request()->routeIs('dashboard.message')">
                             <?= ucfirst(translate('message')) ?>
                         </x-jet-nav-link>
-                        <x-jet-nav-link href="{{ route('dashboard/report') }}" :active="request()->routeIs('dashboard/report')">
+                        <x-jet-nav-link href="{{ route('dashboard.report') }}" :active="request()->routeIs('dashboard.report')">
                             <?= ucfirst(translate('report')) ?>
                         </x-jet-nav-link>
                     @else
@@ -110,16 +110,16 @@
                 <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                     <?= ucfirst(translate('dashboard')) ?>
                 </x-jet-nav-link>
-                <x-jet-nav-link href="{{ route('dashboard/product') }}" :active="request()->routeIs('dashboard/product')">
+                <x-jet-nav-link href="{{ route('dashboard.product') }}" :active="request()->routeIs('dashboard.product')">
                     <?= ucfirst(translate('product')) ?>
                 </x-jet-nav-link>
-                <x-jet-nav-link href="{{ route('dashboard/sale') }}" :active="request()->routeIs('dashboard/sale')">
+                <x-jet-nav-link href="{{ route('dashboard.sale') }}" :active="request()->routeIs('dashboard.sale')">
                     <?= ucfirst(translate('sale')) ?>
                 </x-jet-nav-link>
-                <x-jet-nav-link href="{{ route('dashboard/message') }}" :active="request()->routeIs('dashboard/message')">
+                <x-jet-nav-link href="{{ route('dashboard.message') }}" :active="request()->routeIs('dashboard.message')">
                     <?= ucfirst(translate('message')) ?>
                 </x-jet-nav-link>
-                <x-jet-nav-link href="{{ route('dashboard/report') }}" :active="request()->routeIs('dashboard/report')">
+                <x-jet-nav-link href="{{ route('dashboard.report') }}" :active="request()->routeIs('dashboard.report')">
                     <?= ucfirst(translate('report')) ?>
                 </x-jet-nav-link>
             @else

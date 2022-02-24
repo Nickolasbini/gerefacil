@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Intervention\Validation\Rules\HtmlClean;
+use App\Helpers\Functions;
 
 class Master extends \App\Http\Controllers\Controller
 {
@@ -16,8 +18,12 @@ class Master extends \App\Http\Controllers\Controller
      */
     public function handle(Request $request, Closure $next)
     {
+        $this->sanitazeValues($request);
         $this->setMasterAdminData();
         $this->getUserLanguageToSession();
+        $this->createViewMessageSession();
+        session()->put('viewMessage', 'hey');
+        session()->put('messageType', 'success');
         return $next($request);
     }
 
@@ -82,6 +88,19 @@ class Master extends \App\Http\Controllers\Controller
             if(!in_array($attributeName, $doNotSave)){
                 $session->put('masterAdmin-'.$attributeName, $attribute);
             }
+        }
+    }
+
+    public function sanitazeValues($request)
+    {
+        
+    }
+
+    // create field 'viewMessage' and 'messageOption' at session
+    public static function createViewMessageSession()
+    {
+        if(!session()->has('viewMessage')){
+            Functions::emptyTranslateSession();
         }
     }
 }
