@@ -10,40 +10,56 @@
     height: 2.25rem;
 }
 
-/* product CSS */
-.side-bar{
-    border-right: 1px solid #bfb7b791;
-    width: 15%;
-}
-.side-bar-option, .button-wrapper{
-    cursor: pointer;
-}
-.borders-gray{
-    border-top: 1px solid #ccc9c9;
-    border-bottom: 1px solid #ccc9c9;
-}
-.white-hover:hover{
-    background-color: #fff;
-}
-.close{
-    width: 5%;
-    z-index: 5;
+/* sidebar */
+.sidebar {
+    width: 85px;
+    position: relative;
+    z-index: 1;
+    border-right: 1px solid rgb(209, 197, 197);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-    .side-bar{
-        width: 30%;
-        text-align: center;
-    }
-    .side-bar img{
-        display: none;
-    }
-    .side-bar-option{
-        padding: unset!important;
-        padding-top: 5%;
-        padding-bottom: 5%;
-    }
-    .close{
-        width: 10%;
+.sidebar a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    color: #ddd;
+    background-color: #fff;
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    margin-left: 50px;
+}
+
+.material-icons,
+.icon-text {
+    vertical-align: middle;
+}
+
+.material-icons {
+    padding-bottom: 3px;
+}
+
+.action-container {
+    transition: margin-left .5s;
+    padding: 16px;
+    margin-left: 100px;
+}
+/* On smaller screens, where height is less than 750px, change the style of the sidenav (less padding and a smaller font size) */
+
+@media screen and (max-height: 750px) {
+    .mySlidebar{
+        width: 250px;
     }
 }

@@ -10,9 +10,7 @@
     @include('dashboard/view_message')
 
     <div class="d-flex">
-        <div class="side-bar h-100">
-            @include('dashboard/side_bar', ['title' => 'product'])
-        </div>
+        @include('dashboard/side_bar', ['title' => 'product'])
         <div class="action-container w-100">
             @if(isset($content))
                 {!! $content !!}
@@ -24,7 +22,6 @@
 </x-app-layout>
 <script>
     var currentPage = "{{ isset($pageNumber) ? $pageNumber : 1 }}";
-
     // setting url to edit buttons
     $('.delete-button').on('click', function(){
         var productId = $(this).parents('tr').attr('data-id');
@@ -34,6 +31,7 @@
         }
         $.ajax({
             url: "{{ \App\Helpers\Functions::viewLink('dashboard/product/remove') }}",
+            method: 'POST',
             dataType: 'JSON',
             data: {productId: productId},
             success: function(result){

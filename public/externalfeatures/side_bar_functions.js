@@ -1,15 +1,44 @@
-// do here like a mouse hover to open else, stays closed
-$('#side-bar-button').on('click', function(){
-    $(this).parents('.side-bar').toggleClass('close');
-    if($(this).parents('.side-bar').hasClass('close') == true){
-        $('.side-bar-option').addClass('p-3');
-        $('.side-bar-option').addClass('white-hover');
-        $('.side-bar-option').addClass('borders-gray');
-        $('.side-bar-option a').hide();
-    }else{
-        $('.side-bar-option').removeClass('p-3');
-        $('.side-bar-option').removeClass('white-hover');
-        $('.side-bar-option').removeClass('borders-gray');
-        $('.side-bar-option a').show();
-    }
+var screenWidth = 0;
+$(document).ready(function(){
+    screenWidth = $(window).width();
+    handleScreenWidth();
+
+    // detect screen change
+    $(window).on('resize', function() {
+        screenWidth = $(this).width();
+        handleScreenWidth();
+    });
 });
+
+var mini = true;
+function toggleSidebar() {
+    if (mini) {
+        document.getElementsByClassName("mySlidebar")[0].style.width = "300px";
+        document.getElementsByClassName("action-container")[0].style.marginLeft = "300px";
+        $('.side-bar-option').find('a').show();
+        $('.side-bar-option').removeClass('p-3');
+        this.mini = false;
+    } else {
+        document.getElementsByClassName("mySlidebar")[0].style.width = "85px";
+        document.getElementsByClassName("action-container")[0].style.marginLeft = "85px";
+        $('.side-bar-option').find('a').hide();
+        $('.side-bar-option').addClass('p-3');
+        this.mini = true;
+    }
+}
+
+// activates and deactivate certain thing accordingly to screen width
+function handleScreenWidth(){
+    if(screenWidth < 760){
+        $('.mySlidebar').attr('onmouseover', '');
+        $('.mySlidebar').attr('onmouseout', '');
+        $('.side-bar-option').removeClass('p-3');
+    }else{
+        if(mini == true){
+            $('.side-bar-option').find('a').hide();
+        }
+        $('.mySlidebar').attr('onmouseover', 'toggleSidebar()');
+        $('.mySlidebar').attr('onmouseout', 'toggleSidebar()');
+        $('.side-bar-option').addClass('p-3');        
+    }
+}
