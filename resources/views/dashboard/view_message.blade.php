@@ -16,12 +16,24 @@
 </section>
 
 <script>
-    $.ajax({
-        url: "{{ \App\Helpers\Functions::viewLink('dashboard/cleansessionmessage') }}",
-        type: 'POST'
-    });
+    var viewMessage = "{{ Session::get('viewMessage') }}";
+    if(viewMessage != ''){
+        alert('here');
+        $.ajax({
+            url: "{{ \App\Helpers\Functions::viewLink('dashboard/cleansessionmessage') }}",
+            type: 'POST'
+        });
+    }
 
     $('.close-message').on('click', function(){
         $('#messages_wrapper').fadeOut();
+        awaitAndRemove();
     });
+
+    function awaitAndRemove(){
+        var myInterval = setInterval(function(){
+            $('#viewMessager').remove();
+            clearInterval(myInterval);
+        }, 2000);
+    }
 </script>
