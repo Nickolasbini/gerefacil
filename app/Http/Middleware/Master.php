@@ -22,8 +22,6 @@ class Master extends \App\Http\Controllers\Controller
         $this->setMasterAdminData();
         $this->getUserLanguageToSession();
         $this->createViewMessageSession();
-        session()->put('viewMessage', 'hey');
-        session()->put('messageType', 'success');
         return $next($request);
     }
 
