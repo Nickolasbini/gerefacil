@@ -21,7 +21,8 @@ class Master extends \App\Http\Controllers\Controller
         $this->sanitazeValues($request);
         $this->setMasterAdminData();
         $this->getUserLanguageToSession();
-        $this->createViewMessageSession();
+        Self::createViewMessageSession();
+        $this->setURI($request);
         return $next($request);
     }
 
@@ -100,5 +101,11 @@ class Master extends \App\Http\Controllers\Controller
         if(!session()->has('viewMessage')){
             Functions::emptyTranslateSession();
         }
+    }
+
+    // create at session a uri data reference
+    public function setURI($request)
+    {
+        $this->session->put('uri', $request->path());
     }
 }

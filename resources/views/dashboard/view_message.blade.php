@@ -8,7 +8,12 @@
                 </button>
             </div>
         @elseif(Session::get('messageType') == 'failure')
-
+            <div id="viewMessager" class="alert alert-failure d-flex justify-content-between container pt-3 pb-3" role="alert">
+                {{ Session::get('viewMessage') }}
+                <button type="button" class="close-message" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
         @elseif(Session::get('messageType') == 'alert')
             
         @endif

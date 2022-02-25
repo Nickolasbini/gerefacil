@@ -64,7 +64,7 @@ class User extends Authenticatable
 
     public function getCategories()
     {
-        return $this->hasMany('App\Models\Category', 'id_user');
+        //return $this->hasMany('App\Models\Category', 'id_user');
     }
 
     const SEX_VALUES = ['M','F','U'];

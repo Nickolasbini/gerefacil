@@ -35,19 +35,19 @@ Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActio
 })->name('dashboard');
 
 Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->get('/dashboard/product', function () {
-    return view('dashboard/product_home');
+    return view('dashboard/product_views/product_home');
 })->name('dashboard.product');
 
 Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->get('/dashboard/sale', function () {
-    return view('dashboard/sale_home');
+    return view('dashboard/sale_views/sale_home');
 })->name('dashboard.sale');
 
 Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->get('/dashboard/message', function () {
-    return view('dashboard/message_home');
+    return view('dashboard/message_views/message_home');
 })->name('dashboard.message');
 
 Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->get('/dashboard/report', function () {
-    return view('dashboard/report_home');
+    return view('dashboard/report_views/report_home');
 })->name('dashboard.report');
 
 Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->group(function () {

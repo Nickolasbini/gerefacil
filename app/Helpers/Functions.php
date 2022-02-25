@@ -84,4 +84,43 @@ class Functions
         session()->put('viewMessage', null);
         session()->put('messageType', null);
     }
+
+    // redirect to uri
+    public static function redirectToURI($customURI = null)
+    {
+        $uriToUse = $customURI ? $customURI : session()->get('uri');
+        return redirect($uriToUse);
+    }
+
+    /**
+     * store files at STORAGE accordingly
+     * @param <array>  keys: <string> 'name' (bla.$extension), <string> 'tmp_name'
+     * @param <string> the path to store data
+     * @return nill
+     */
+    public static function saveFiles($files = null, $path = 'app/archives/')
+    {
+        $files = ($files ? $files : $_FILES);
+        // base path
+        $storagePath = storage_path($path);
+        // create required folders
+        $pathToFolders = storage_path() . '/';
+        foreach(explode('/', $path) as $folder){
+            $pathToFolders .= $folder .'/';
+            if($folder == '')
+                continue;
+            if(!file_exists($pathToFolders))
+                mkdir($pathToFolders);
+        }
+        // store files
+        foreach($_FILES as $file){
+            for($i = 0; $i < count($file['name']); $i++){
+                $name      = $file['name'][$i];
+                $tmp       = $file['tmp_name'][$i];
+                if($name != ''){
+                    file_put_contents($storagePath . $name, file_get_contents($tmp));
+                }
+            }
+        }
+    }
 }

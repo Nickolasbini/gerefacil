@@ -20,62 +20,48 @@ class ProductController extends Controller
     {
         $id             = $this->getParameter('id');
         $name           = $this->getParameter('name');
-        $categoryId     = $this->getParameter('categoryId');
+        $categoryId     = $this->getParameter('category');
         $productDetails = $this->getParameter('productDetails');
         $price          = $this->getParameter('price');
         $price          = str_replace(',', '.', $price);
         $quantity       = $this->getParameter('quantity');
+        if(!$name || !$categoryId || !$price || !$quantity){
+            Functions::translateAndSetToSession('required data missing', 'failure');
+            return Functions::redirectToURI();
+        }
         $productObj = new Product();
         if($id){
             $product = $productObj->find($id);
             if(!$product){
-                return json_encode([
-                    'success' => false,
-                    'message' => ucfirst(translate('invalid'))
-                ]);
+                Functions::translateAndSetToSession('invalid', 'failure');
+                Functions::redirectToURI();
             }
             $productObj = $product;
         }
-        if($categoryId){
-            $categoryObj = new Category();
-            $category = $categoryObj->find($categoryId);
-            if(!$category){
-                return json_encode([
-                    'success' => false,
-                    'message' => ucfirst(translate('category is invalid'))
-                ]);
-            }
-            // verify if user_id is the same as mine or if it's from the superAdmin User
-            $userObj = $category->getUser();
-            if($userObj->id != $this->getLoggedUserId() && !$userObj->master_admin){
-                return json_encode([
-                    'success' => false,
-                    'message' => ucfirst(translate('category can not be user'))
-                ]);
-            }
-            $categoryObj = $category;
-        }else{
-            return json_encode([
-                'success' => false,
-                'message' => ucfirst(translate('category is required'))
-            ]);
+        $categoryObj = new Category();
+        $category = $categoryObj->find($categoryId);
+        if(!$category){
+            Functions::translateAndSetToSession('category is invalid', 'failure');
+            return Functions::redirectToURI();
         }
+        // verify if user_id is the same as mine or if it's from the superAdmin User
+        $userObj = $category->getUser();
+        if($userObj->id != $this->getLoggedUserId() && !$userObj->master_admin){
+            Functions::translateAndSetToSession('category can not be user', 'failure');
+            return Functions::redirectToURI();
+        }
+        $categoryObj = $category;
         $result = Product::updateOrCreate(
             ['id' => $id],
             ['name' => $name, 'category_id' => $categoryId, 'productDetails' => $productDetails, 'price' => $price, 'quantity' => $quantity, 'user_id' => $this->getLoggedUserId()]
         );
         if(!$result){
-            return json_encode([
-                'success' => false,
-                'message' => ucfirst(translate('an error occured, try again later'))
-            ]);
+            Functions::translateAndSetToSession('an error occured, try again later', 'failure');
+            return Functions::redirectToURI();
         }
         $message = ($id ? ucfirst(translate('product updated')) : ucfirst(translate('product created')));
-        return json_encode([
-            'success' => true,
-            'message' => $message,
-            'id'      => $productObj->id
-        ]);
+        Functions::translateAndSetToSession($message, 'success');
+        return Functions::redirectToURI($this->session->get('uri') . '/' . $result->id);
     }
       
     /**
@@ -86,22 +72,41 @@ class ProductController extends Controller
     */
     public function list()
     {
-        $limit  = $this->getParameter('limit', 10);
-        $filter = $this->getParameter('filter');
-        $page   = $this->getParameter('page', 1);
+        $limit       = $this->getParameter('limit', 10);
+        $filter      = $this->getParameter('q');
+        $page        = $this->getParameter('page', 1);
 
         //$a = Category::find(1);
         //dd($a->getUser()->name);
 
-        $elements = [];
-        $total = Product::where('user_id', $this->getLoggedUserId())->orWhere('user_id', null)->count();
+        $elements = []; 
+        $loggedUserId = $this->getLoggedUserId();
+        if($filter){
+           $total = Product::where(function ($query) use ($loggedUserId) {
+                $query->where('user_id', $loggedUserId);
+            })
+            ->where(function ($query) use ($filter) {
+                $query->where('name', 'like', '%'.$filter.'%');
+            })->count();
+        }else{
+            $total = Product::where('user_id', $this->getLoggedUserId())->orWhere('user_id', null)->count();
+        }
         if($total < 0){
             return json_encode([
                 'success' => false,
                 'content' => $elements
             ]);
         }
-        $products = Product::where('user_id', $this->getLoggedUserId())->orWhere('user_id', $this->getMasterAdminId())->paginate($limit);
+        if($filter){
+            $products = Product::where(function ($query) use ($loggedUserId) {
+                $query->where('user_id', $loggedUserId);
+            })
+            ->where(function ($query) use ($filter) {
+                $query->where('name', 'like', '%'.$filter.'%');
+            })->paginate($limit);
+        }else{
+            $products = Product::where('user_id', $this->getLoggedUserId())->paginate($limit);
+        }
         $allCategories = $this->getIndexedArray('id', 'name', (new Category())->getMyCategories());
         $elements = [];
         if($products->count() > 0){
@@ -134,9 +139,16 @@ class ProductController extends Controller
                 'updated_at'     => ucfirst(translate('updated at'))
             ]
         ];
+        $toHide = ($filter ? ['id', 'filter'] : ['id']);
         $tableWk = new TableGenerator();
-        $htmlOfTable = $tableWk->generateHTMLTable($elements, ['id'], $additionalParameters);
-        return view('dashboard/product_home')->with([
+        $htmlOfTable = $tableWk->generateHTMLTable($elements, $toHide, $additionalParameters);
+        if($filter){
+            return json_encode([
+                'success' => count($products) > 0 ? true : false,
+                'content' => $htmlOfTable
+            ]);
+        }
+        return view('dashboard/product_views/product_home')->with([
             'content'    => $htmlOfTable,
             'page'       => $products,
             'pageNumber' => $page
@@ -166,7 +178,7 @@ class ProductController extends Controller
                 'message' => Functions::translateAndSetToSession('invalid')
             ]);
         }
-        $result = $product->remove();
+        $result = $product->delete();
         if(!$result){
             return json_encode([
                 'success' => false,

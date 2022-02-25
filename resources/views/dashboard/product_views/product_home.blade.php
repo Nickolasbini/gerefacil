@@ -12,10 +12,13 @@
     <div class="d-flex">
         @include('dashboard/side_bar', ['title' => 'product'])
         <div class="action-container w-100">
-            @if(isset($content))
-                {!! $content !!}
-                {{ $page->links() }}
-            @endif
+            <div id="content">
+                @if(isset($content))
+                    {!! $content !!}
+                    {{ $page->links() }}
+                @endif
+            </div>
+            <div id="pagination-master"></div>
         </div>
     </div>
 
@@ -40,6 +43,38 @@
                     window.location.reload("{{ \App\Helpers\Functions::viewLink('dashboard/product/remove') }}" + '/' + currentPage);
                 }else{
                     // don't reload page and show message by js (do not reload page)
+                }
+            }
+        });
+    });
+
+    var translations = {
+        showing: "<?= ucfirst(translate('showing')) ?>",
+        of:      "<?= translate('of') ?>",
+        to:      "<?= translate('to') ?>",
+        results: "<?= translate('results') ?>"
+    };
+    console.log(translations);
+
+    $('#table-filter').on('input', function(){
+        var value = $(this).val();
+        if(value == '')
+            return;
+        $('#table-sectors').hide();
+        $('#content').find('nav').hide();
+        $.ajax({
+            url: "{{ \App\Helpers\Functions::viewLink('dashboard/product/list') }}" + '?q=' + value,
+            method: 'Get',
+            dataType: 'JSON',
+            success: function(result){
+                if(result.success == true){
+                    $('#pagination-master').html(result.content);
+                    $('#pagination-master').show();
+                }else{
+                    $('#pagination-master').html('');
+                    $('#pagination-master').hide();
+                    $('#table-sectors').show();
+                    $('#content').find('nav').show();
                 }
             }
         });
