@@ -29,6 +29,33 @@
         <div class="container">
             <h1>Me</h1>
         </div>
+
+        <section id="products-list" class="container">
+            <p class="h2 mb-5">
+                Produtos:
+            </p>
+            <div class="col-sm-10 col-md-3 p-2 pt-4 pb-4 border-t border-b text-center">
+                <div class="ps-3 pe-3 mb-5">
+                    <img class="img-fluid rounded" src="{{asset('images/sea.jpg')}}">
+                </div>
+                <p class="h5">
+                    Nome do produto
+                </p>
+                <div class="short-description mt-3 mb-3">
+                    <p>Descrição</p>
+                    <a id="description-show-more" class="btn btn-primary opacity-hover">Ler mais</a>
+                </div>
+                <p class="complete-description hidden-description">
+        
+                </p>
+                <div>
+                    <small class="prior-price">Valor anterior</small>
+                    <p>R$20,00 (Pormoção)</p>
+                </div>
+                <a class="btn btn-dark w-100 opacity-hover">Eu quero</a>
+            </div>
+        </section>
+
     </body>
 </html>
 
