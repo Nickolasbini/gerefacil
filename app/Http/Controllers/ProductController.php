@@ -7,6 +7,7 @@ use App\Helpers\Functions;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Document;
 
 class ProductController extends Controller 
 {
@@ -16,17 +17,17 @@ class ProductController extends Controller
      * 
      * @return 
     */
-    public function save()
+    public function save($productId = null)
     {
-        $id             = $this->getParameter('id');
+        $id             = $productId;
         $name           = $this->getParameter('name');
         $categoryId     = $this->getParameter('category');
         $productDetails = $this->getParameter('productDetails');
         $price          = $this->getParameter('price');
         $price          = str_replace(',', '.', $price);
         $quantity       = $this->getParameter('quantity');
-        $images         = $this->getParameter('images');
-        if(!$name || !$categoryId || !$price || !$quantity){
+        $images         = $this->getParameter('files');
+        if(!$name || !$categoryId || !$price || !$quantity || !$productDetails || !$images){
             Functions::translateAndSetToSession('required data missing', 'failure');
             return Functions::redirectToURI();
         }
@@ -45,16 +46,38 @@ class ProductController extends Controller
             Functions::translateAndSetToSession('category is invalid', 'failure');
             return Functions::redirectToURI();
         }
+        $documentId = null;
+        if($images && count($images) > 0){
+            $cropData = [
+                'imgWidth'  => 160,
+                'imgHeight' => 300,
+                'imgX'      => 0,
+                'imgY'      => 0,
+                'resize'    => true
+            ];
+            $documentObj = new Document();
+            // later change this in order to loop throught many photos
+            $images = $this->request->file('files')[0];
+            $document = $documentObj->saveAnImageWithCrop($images, $cropData);
+            if(!is_object($document)){
+                Functions::translateAndSetToSession(ucfirst(translate('invalid image(s)')), 'failure', false);
+                if($id){
+                    return Functions::redirectToURI('product/save/'.$id);
+                }else{
+                    return Functions::redirectToURI('product/save');
+                }
+            }
+            $documentId = $document->id;
+        }
         // verify if user_id is the same as mine or if it's from the superAdmin User
         $userObj = $category->getUser();
         if($userObj->id != $this->getLoggedUserId() && !$userObj->master_admin){
             Functions::translateAndSetToSession('category can not be user', 'failure');
             return Functions::redirectToURI();
         }
-        $categoryObj = $category;
         $result = Product::updateOrCreate(
             ['id' => $id],
-            ['name' => $name, 'category_id' => $categoryId, 'productDetails' => $productDetails, 'price' => $price, 'quantity' => $quantity, 'user_id' => $this->getLoggedUserId()]
+            ['name' => $name, 'category_id' => $categoryId, 'productDetails' => $productDetails, 'price' => Functions::parsePriceToDB($price), 'quantity' => $quantity, 'user_id' => $this->getLoggedUserId(), 'document' => $documentId]
         );
         if(!$result){
             Functions::translateAndSetToSession('an error occured, try again later', 'failure');
@@ -62,7 +85,7 @@ class ProductController extends Controller
         }
         $message = ($id ? ucfirst(translate('product updated')) : ucfirst(translate('product created')));
         Functions::translateAndSetToSession($message, 'success');
-        return Functions::redirectToURI($this->session->get('uri') . '/' . $result->id);
+        return Functions::redirectToURI('dashboard/product/save/' . $result->id);
     }
       
     /**

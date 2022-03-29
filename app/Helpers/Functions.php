@@ -127,7 +127,47 @@ class Functions
     // formats value with the correct currency type
     public static function formatMoney($value)
     {
-        $monetary = env('MONETARY_FORMAT');
-        return $monetary . (float)$value;
+        $currencyLang = env('CURRENCY_LANG');
+        $currencyType = env('CURRENCY_TYPE');
+        $money = null;
+        switch($currencyLang){
+            case 'BRL':
+                $money = 'R$' . str_replace('.', ',', $value);
+            break;
+            case 'USD':
+                $money = '$' . str_replace('.', ',', $value);
+            break;
+            default:
+                $money = 'R$' . str_replace('.', ',', $value);
+            break;
+        }
+        return $money;
+    }
+
+    public static function generateHash($value = null, $directorySensitive = false, $maxLength = 30)
+    {
+        $value  = ($value ? $value : (new \DateTime)->format('Y-m-d h:i:s'));
+        $hashed =  \Illuminate\Support\Facades\Hash::make($value);
+        $hashed = substr($hashed, 0, $maxLength);
+        return ($directorySensitive ? str_replace(['.', '/', '-'], '', $hashed) : $hashed);
+    }
+
+    // prepare string to be saved on decimal field at DB
+    public static function parsePriceToDB($price)
+    {
+        $price = str_replace(['R$', '$'], '', $price);
+        $price = trim(str_replace(',', '.', $price));
+        $price = preg_replace('/\s+/', '', $price);
+        return (float)$price;
+    }
+
+    // shorten a text including '...' at the end if needed
+    public static function shortenText($text, $maxLength = 200)
+    {
+        if(strlen($text) > $maxLength){
+            $newText = substr($text, 0, $maxLength);
+            $text = $newText . ' ...'; 
+        }
+        return $text;
     }
 }

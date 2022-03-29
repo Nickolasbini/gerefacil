@@ -56,7 +56,7 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
     Route::get('product/list/{page?}', 'ProductController@list')->name('product.list');
     Route::get('product/save/{productId?}', 'ProductController@create')->name('product.create');
     
-    Route::post('product/save', 'ProductController@save')->name('product.save');
+    Route::post('product/save/{productId?}', 'ProductController@save')->name('product.save');
     Route::post('product/remove', 'ProductController@remove')->name('product.remove');
 
     // products routes

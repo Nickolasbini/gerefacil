@@ -14,12 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('document', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->string('filePath', 200);
-            $table->string('fileName', 200);
-            $table->string('extension', 10);
-            $table->string('miniaturesJSON', 250);
+            $table->bigIncrements('id');
+			$table->string('name', 200);
+			$table->string('extension', 10);
+			$table->string('filePath', 80);
+			$table->timestamps();
         });
     }
 

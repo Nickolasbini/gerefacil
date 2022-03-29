@@ -18,7 +18,7 @@
             @include('dashboard/side_bar', ['title' => 'product'])
         </div>
         <div class="action-container w-100">
-            {{ \Form::open(['route' => \App\Helpers\Functions::viewLink('dashboard/product/save'), 'enctype' => 'multipart/form-data', 'id' => 'productSave', 'class' => 'container', 'method' => 'post'])}}
+            {{ \Form::open(['route' => \App\Helpers\Functions::viewLink('dashboard/product/save'), 'enctype' => 'multipart/form-data', 'id' => 'saveProduct-form', 'class' => 'container', 'method' => 'post'])}}
                 <div class="mt-3 mb-3 row col-8">
                     <label class="mt-2 h5"><?= ucfirst(translate('product name')) ?></label>
                     @if($product)
@@ -50,14 +50,18 @@
                 <div class="mt-3 mb-3 row col-8">
                     <label class="mt-2 h5"><?= ucfirst(translate('product details')) ?></label>
                     @if($product)
-                        <textarea class="form-control" rows="6">{{$product->productDetails}}</textarea>
+                        <textarea class="form-control" name="productDetails" rows="6">{{$product->productDetails}}</textarea>
                     @else
-                        <textarea class="form-control" rows="6"></textarea>
+                        <textarea class="form-control" name="productDetails" rows="6"></textarea>
                     @endif
                 </div>
                 <div class="mt-3 mb-3 row col-8">
                     <input id="browse" type="file" name="files[]" multiple class="myfrm" style="z-index: 1;" onchange="readFile()">
-                    <div id="preview" class="row"></div>
+                    <div id="preview">
+                        @if($product)
+                            <img class="img-fluid" src="{{$product->getPhotoAsBase64()}}">
+                        @endif
+                    </div>
                 </div>
                 @if($product)
                     <div>
@@ -87,7 +91,8 @@
             alert('fields required');
             return;
         }
-        $(this).submit();
+        $('#price').val(val);
+        $('#saveProduct-form').submit();
     });
 
     $('#quantity').on('input', function(){
@@ -104,6 +109,7 @@
         currentText = parseToCurrency(currentText);
         $(this).val(currentText);
     });
+    var val = null;
     function parseToCurrency(value = 10){
         if(isNaN(value)){
             value = value.replace('R$', '');
@@ -117,6 +123,7 @@
             style: 'currency',
             currency: currencyType,
         });
+        val = value;
         return formatter.format(value);
     }
 
@@ -179,7 +186,7 @@
         width: 200px;
         height: 200px;
     }
-    @media (max-width < 760px){
+    @media (max-width: 720px){
         #preview > img{
             width: 70px;
             height: 70px;
