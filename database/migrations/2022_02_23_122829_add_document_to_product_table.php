@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::table('product', function (Blueprint $table) {
             $table->string('photosReferences', '1000')->nullable();
+            $table->bigInteger('document')->unsigned()->nullable();
+            $table->foreign('document')->references('id')->on('document');
         });
     }
 

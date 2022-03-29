@@ -20,7 +20,8 @@ class Product extends Model {
         'productDetails',
         'price',
         'quantity',
-        'user_id'
+        'user_id',
+        'document'
     ];
 
     // setters
@@ -47,5 +48,20 @@ class Product extends Model {
     public function setUser($userId)
     {
         $this->user_id = $userId;
+    }
+
+    // return product image
+    public function getPhotoAsBase64()
+    {
+        $documentObj = (new Document)->find($this->document);
+        if(!$documentObj){
+            return null;
+        }
+        $path = $documentObj->parsePath();
+        if(file_exists($path)){
+            $fileBase64 = file_get_contents($path);
+            return 'data:image/png;base64,'.base64_encode($fileBase64);
+        }
+        return null;
     }
 }

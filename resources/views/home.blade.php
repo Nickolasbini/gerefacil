@@ -26,34 +26,45 @@
             @endif
         </div>
 
-        <div class="container">
-            <h1>Me</h1>
+        <div class="container mt-5 mb-5">
+            <div class="d-flex justify-content-center">
+                <label for="search-products"><?= ucfirst(translate('search for products'))  ?></label>
+                <input id='search-products' type="text" placeholder="...">
+            </div>
         </div>
 
-        <section id="products-list" class="container">
+        <section id="products-list" class="container mt-5">
             <p class="h2 mb-5">
-                Produtos:
+                <?= ucfirst(translate('products')) ?>:
             </p>
-            <div class="col-sm-10 col-md-3 p-2 pt-4 pb-4 border-t border-b text-center">
-                <div class="ps-3 pe-3 mb-5">
-                    <img class="img-fluid rounded" src="{{asset('images/sea.jpg')}}">
+            @foreach($products as $product)
+                <div class="col-sm-10 col-md-3 p-2 pt-4 pb-4 border-t border-b text-center">
+                    <div class="ps-3 pe-3 mb-5">
+                        <img class="img-fluid rounded" src="{{$product->getPhotoAsBase64()}}">
+                    </div>
+                    <p class="h5">
+                        {{$product->name}}
+                    </p>
+                    <div class="short-description mt-3 mb-3">
+                        <p>{{$product->description}}</p>
+                        <a id="description-show-more" class="btn btn-primary opacity-hover">Ler mais</a>
+                    </div>
+                    <p class="complete-description hidden-description">
+            
+                    </p>
+                    <div>
+                        @if($product->promotion)
+                            <small class="prior-price">Valor anterior</small>
+                            <p>{{\App\Helpers\Functions::formatMoney($product->price)}} (Pormoção)</p>
+                        @else
+                            <p>
+                                {{\App\Helpers\Functions::formatMoney($product->price)}}
+                            </p>
+                        @endif
+                    </div>
+                    <a class="btn btn-dark w-100 opacity-hover" href="{{\App\Helpers\Functions::viewLink('product/detail/'.$product->id)}}">Eu quero</a>
                 </div>
-                <p class="h5">
-                    Nome do produto
-                </p>
-                <div class="short-description mt-3 mb-3">
-                    <p>Descrição</p>
-                    <a id="description-show-more" class="btn btn-primary opacity-hover">Ler mais</a>
-                </div>
-                <p class="complete-description hidden-description">
-        
-                </p>
-                <div>
-                    <small class="prior-price">Valor anterior</small>
-                    <p>R$20,00 (Pormoção)</p>
-                </div>
-                <a class="btn btn-dark w-100 opacity-hover">Eu quero</a>
-            </div>
+            @endforeach
         </section>
 
     </body>

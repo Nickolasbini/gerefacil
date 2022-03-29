@@ -21,16 +21,15 @@ use App\Http\Controllers\CategoryController;
 
 // normal routes
 Route::middleware(['master'])->group(function(){ 
-    Route::get('/', function () {
-        return view('home');
-    });
+    Route::get('/{page?}', 'IndexController@homePage')->name('/');
+
     Route::post('user/validatecpf', 'UserController@validateCPF')->name('validate.cpf');
     Route::post('user/getcepdata', 'UserController@getCEPData')->name('get.cep.data');
     Route::post('user/checkserial', 'UserController@checkSerial')->name('check.serial');
 });
 
-// sadly I can not create a group for some reason (maybe cause of jetstream)
-Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->get('/dashboard', function () {
+// dashboard routes
+Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->get('/dashboard/home', function () {
     return view('dashboard');
 })->name('dashboard');
 

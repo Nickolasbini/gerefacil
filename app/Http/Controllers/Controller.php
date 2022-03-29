@@ -71,6 +71,12 @@ class Controller extends BaseController
 
     function getMasterAdminId()
     {
+        if(!$this->session->get('getMasterAdminId')){
+            $masterAdminObj = $this->getMasterAdmin();
+            if($masterAdminObj){
+                $this->session->put('masterAdmin-id');
+            }
+        }
         return $this->session->get('masterAdmin-id');
     }
 

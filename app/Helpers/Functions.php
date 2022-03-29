@@ -123,4 +123,11 @@ class Functions
             }
         }
     }
+
+    // formats value with the correct currency type
+    public static function formatMoney($value)
+    {
+        $monetary = env('MONETARY_FORMAT');
+        return $monetary . (float)$value;
+    }
 }
