@@ -68,6 +68,7 @@
 
     var messageToDispaly = "{{ session()->get('viewMessage') }}";
     var type = "{{ session()->get('messageType') }}";
+    var screenWidht = 0;
     $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip();
         $('#main-toast').toast();
@@ -78,6 +79,7 @@
             cleanViewMessage();
         }
         $('#master-modal').modal();
+        screenWidht = $(window).scrollTop();
     });
 
     function cleanViewMessage(){

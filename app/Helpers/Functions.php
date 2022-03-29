@@ -170,4 +170,34 @@ class Functions
         }
         return $text;
     }
+
+    // return data of adminConfig.json
+    /*
+     * adminMessage is used when there's a message to be displayed for everyone, the 'text' is the message, 'from' and 'to' are the period for this to be displayed
+     * note: will only be displayed when 'login' is done
+    */
+    public static function adminRelatedDataArray()
+    {
+        $path = storage_path('app/admin');
+        if(!is_dir($path)){
+            mkdir($path);
+        }
+        $filePath = $path . '/adminConfig.json';
+        $configFileStructure = [
+            'whatsApp'     => '',
+            'whatsMessage' => '',
+            'facebook'     => '',
+            'instagram'    => '',
+            'email'        => '',
+            'adminMessage' => [
+                'text' => '',
+                'from' => '',
+                'to'   => ''
+            ]
+        ];
+        if(!file_exists($filePath)){
+            file_put_contents($filePath, json_encode($configFileStructure));
+        }
+        return json_decode(file_get_contents($filePath), true);
+    }
 }

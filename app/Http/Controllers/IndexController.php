@@ -19,21 +19,27 @@ class IndexController extends Controller
         switch($filter){
             case 'cheaper':
                 if($productName){
+                    $products = Product::where('name',' like', '%'.$productName.'%')->orderBy('price', 'asc')->paginate($limit);
+                }else{
+                    $products = Product::where('id', '>', '0')->orderBy('price', 'asc')->paginate($limit);
+                }
+            break;
+            case 'expensive':
+                if($productName){
                     $products = Product::where('name',' like', '%'.$productName.'%')->orderBy('price', 'desc')->paginate($limit);
                 }else{
                     $products = Product::where('id', '>', '0')->orderBy('price', 'desc')->paginate($limit);
                 }
             break;
-            case 'expensive':
+            case 'category':
                 if($productName){
-                    $products = Product::where('name',' like', '%'.$productName.'%')->orderBy('price')->paginate($limit);
-                }else{
-                    $products = Product::where('id', '>', '0')->orderBy('price')->paginate($limit);
+                    // in this case category id
+                    $products = Product::where('category_id', $productName)->orderBy('price')->paginate($limit);
                 }
             break;
             default:
                 if($productName){
-                    $products = Product::where('name',' like', '%'.$productName.'%')->paginate($limit);
+                    $products = Product::where('name', 'like', '%'.$productName.'%')->paginate($limit);
                 }else{
                     $products = Product::where('id', '>', '0')->paginate($limit);
                 }
@@ -41,9 +47,17 @@ class IndexController extends Controller
         }
         $categoryObj = new Category();
         $categories = $categoryObj->getAndParse('idAndName');
+        $filteringOptions = [
+            'cheaper'   => ucfirst(translate('cheaper')),
+            'expensive' => ucfirst(translate('expensive'))
+        ];
         return view('home')->with([
             'products'   => $products,
-            'categories' => $categories
+            'categories' => $categories,
+            'search'     => $productName,
+            'page'       => $page,
+            'filter'     => $filter,
+            'filteringOptions' => $filteringOptions
         ]);
     }
 
