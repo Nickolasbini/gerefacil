@@ -180,4 +180,17 @@ class ProductController extends Controller
             'added'   => ($result == 'added' ? true : false)
         ]);
     }
+
+    // gather product detail and calls its view
+    public function productDetail($productId = null)
+    {
+        $product = Product::find($productId);
+        if(!$product){
+            Functions::translateAndSetToSession('invalid product', 'failure');
+            return redirect()->back();
+        }
+        return view('dashboard/product_views/product_detail')->with([
+            'product' => $product
+        ]);
+    }
 }

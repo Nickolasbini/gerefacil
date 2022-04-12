@@ -50,7 +50,7 @@
                             </p>
                         @endif
                     </div>
-                    <a class="btn btn-dark w-100 opacity-hover" href="{{\App\Helpers\Functions::viewLink('product/detail/'.$product->id)}}">Eu quero</a>
+                    <a class="btn btn-dark w-100 opacity-hover" href="{{\App\Helpers\Functions::viewLink('dashboard/product/detail/'.$product->id)}}">Eu quero</a>
                 </div>
             @endforeach
             <div class="mt-3">

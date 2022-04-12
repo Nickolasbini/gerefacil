@@ -28,9 +28,11 @@
                     @foreach($products->items() as $product)
                         <div class="col-sm-10 col-md-3 m-1 p-3 pt-4 pb-4 border rounded text-center">
                             <div class="w-100 text-right">
-                                <a class="btn btn-danger mb-1" onclick="removeProduct(<?= $product->id ?>)" title="<?= ucfirst(translate('remove')) ?>">
-                                    X
-                                </a>
+                                @if(Auth::user() && Auth::user()->id == $product->id)
+                                    <a class="btn btn-danger mb-1" onclick="removeProduct(<?= $product->id ?>)" title="<?= ucfirst(translate('remove')) ?>">
+                                        X
+                                    </a>
+                                @endif
                             </div>
                             <div class="ps-3 pe-3 mb-4 col-sm-10 col-md-8 m-auto">
                                 <img class="img-fluid rounded" src="{{$product->getPhotoAsBase64()}}">

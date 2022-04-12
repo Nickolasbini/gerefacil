@@ -13,21 +13,19 @@ class IndexController extends Controller
     // homepage related data to be sent to view
     public function homePage($page = 1)
     {
-
-        $frete = new \App\Models\Shipment(
-            83702185, 
-            83820429, 
-            5, 
-            10, 
-            10, 
-            10, 
-            55
-        );
+        // $frete = new \App\Models\Shipment(
+        //     83702185, 
+        //     83820429, 
+        //     5, 
+        //     10, 
+        //     10, 
+        //     10, 
+        //     55
+        // );
         
-        echo $frete->getValor();//Obtem o valor do frete
-        echo $frete->getPrazoEntrega();//Obtem o prazo de entrega em dias
+        // echo $frete->getValor();//Obtem o valor do frete
+        // echo $frete->getPrazoEntrega();//Obtem o prazo de entrega em dias
 
-        die;
 
         $productName = $this->getParameter('search');
         $limit       = $this->getParameter('limit', 10);

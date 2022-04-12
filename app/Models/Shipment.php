@@ -8,8 +8,20 @@ namespace App\Models;
 class Shipment {
 
 	const URL = "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx/CalcPrecoPrazo?";
-	const SERVICE = "40010";
 	private $xml;
+
+    private $typesOfShipment = [
+        'Sedex' => '40010',
+        '40010' => 'Sedex',
+        'Sedex a Cobrar' => '40045',
+        '40045' => 'Sedex a Cobrar',
+        'PAC' => '41106',
+        '41106' => 'PAC',
+        'Sedex 10' => '40215',
+        '40215' => 'Sedex 10',
+        'e-Sedex' => '81019',
+        '81019' => 'e-Sedex'
+    ];
 
 	public function __construct(
 		$CEPorigem,
@@ -18,13 +30,13 @@ class Shipment {
 		$comprimento,
 		$altura,
 		$largura,
-		$valor
+		$valor,
+        $service = 40010
 	){
-
 		if ($comprimento < 16) $comprimento = 16;
 
 		$this->xml = simplexml_load_file(
-			Shipment::URL."nCdEmpresa=&sDsSenha=&sCepOrigem=".$CEPorigem."&sCepDestino=".$CEPdestino."&nVlPeso=".$peso."&nCdFormato=1&nVlComprimento=".$comprimento."&nVlAltura=".$altura."&nVlLargura=".$largura."&sCdMaoPropria=n&nVlValorDeclarado=".$valor."&sCdAvisoRecebimento=n&nCdServico=".Shipment::SERVICE."&nVlDiametro=0&StrRetorno=xml");
+			Shipment::URL."nCdEmpresa=&sDsSenha=&sCepOrigem=".$CEPorigem."&sCepDestino=".$CEPdestino."&nVlPeso=".$peso."&nCdFormato=1&nVlComprimento=".$comprimento."&nVlAltura=".$altura."&nVlLargura=".$largura."&sCdMaoPropria=n&nVlValorDeclarado=".$valor."&sCdAvisoRecebimento=n&nCdServico=".$service."&nVlDiametro=0&StrRetorno=xml");
 		if(!$this->xml->Servicos->cServico){
 	        throw new Exception("Error Processing Request", 400);
 	    }

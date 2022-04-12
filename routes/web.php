@@ -54,6 +54,7 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
     Route::get('getprofilephoto', [UserController::class, 'getProfilePhoto']);
 
     // products routes
+    Route::get('product/detail/{productId?}', 'ProductController@productDetail')->name('product.detail');
     Route::get('product/list', 'ProductController@list')->name('product.list');
     Route::get('product/save/{productId?}', 'ProductController@create')->name('product.create');
     
