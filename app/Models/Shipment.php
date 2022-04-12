@@ -44,7 +44,7 @@ class Shipment {
 	    if ($this->xml->Servicos->cServico->Erro != '0' && !$this->xml->Servicos->cServico->Erro == '010') {
 	    	throw new Exception($this->xml->Servicos->cServico->MsgErro, 400);
 	    }
-        dd($this->xml);
+        
 	}
 
 	public function getValor(){
