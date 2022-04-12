@@ -21,7 +21,8 @@ class Product extends Model {
         'price',
         'quantity',
         'user_id',
-        'document'
+        'document',
+        'likes'
     ];
 
     // setters
@@ -63,5 +64,15 @@ class Product extends Model {
             return 'data:image/png;base64,'.base64_encode($fileBase64);
         }
         return null;
+    }
+
+    // adds 1 or removes 1 to total of likes of this product
+    public function handleLikes($remove = false)
+    {
+        $totalOfLikes = $this->likes;
+        $totalOfLikes = $remove ? $totalOfLikes-- : $totalOfLikes++;
+        $this->likes  = $totalOfLikes;
+        $this->save();
+        return $this;
     }
 }

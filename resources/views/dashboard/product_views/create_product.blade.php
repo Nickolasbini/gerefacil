@@ -1,77 +1,89 @@
 @include('dashboard/master')
+@include('dashboard/view_message')
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            @if($product)
-                <?= ucfirst(translate('edit product')); ?>
-            @else
-                <?= ucfirst(translate('create product')); ?>
-            @endif
-            
+            <?= ucfirst(translate('my products')); ?>
         </h2>
     </x-slot>
 
-    @include('dashboard/view_message')
-
     <section id="productSave" class="d-flex h-100">
-        <div class="side-bar h-100">
-            @include('dashboard/side_bar', ['title' => 'product'])
+        <div class="left-side col-sm-12 col-md-2 border-r">
+            <ul>
+                <li class="d-flex p-2 mt-5 mb-5 white-hover rounded cursor-pointer">
+                    <img class="small-icon me-2" src="{{ asset('images/add-icon.webp') }}">
+                    <a class="opacity-hover btn" href="{{\App\Helpers\Functions::viewLink('/dashboard/product/save')}}"><?= ucfirst(translate('create product')) ?></a>
+                </li>
+                <li class="d-flex p-2 mt-5 mb-5 white-hover rounded cursor-pointer">
+                    <img class="small-icon me-2" src="{{ asset('images/list-icon.webp') }}">
+                    <a class="opacity-hover btn" href="{{\App\Helpers\Functions::viewLink('/dashboard/product', true)}}"><?= ucfirst(translate('list products')) ?></a>
+                </li>
+            </ul>
         </div>
-        <div class="action-container w-100">
-            {{ \Form::open(['route' => \App\Helpers\Functions::viewLink('dashboard/product/save'), 'enctype' => 'multipart/form-data', 'id' => 'saveProduct-form', 'class' => 'container', 'method' => 'post'])}}
-                <div class="mt-3 mb-3 row col-8">
-                    <label class="mt-2 h5"><?= ucfirst(translate('product name')) ?></label>
-                    @if($product)
-                        <input name="name" type="text" value="{{$product->name}}" class="form-control rounded">
-                    @else
-                        <input name="name" type="text" class="form-control rounded">
-                    @endif
-                </div>
-                <div class="mt-3 mb-3 row col-8">
-                    <label class="mt-2 h5"><?= ucfirst(translate('category')) ?></label>
-                    {{ Form::select('category', $category ) }}
-                </div>
-                <div class="mt-3 mb-3 row col-8">
-                    <label class="mt-2 h5"><?= ucfirst(translate('price')) ?></label>
-                    @if($product)
-                        <input name="price" id="price" type="text" class="form-control rounded" value="{{$product->price}}">
-                    @else
-                        <input name="price" id="price" type="text" class="form-control rounded">
-                    @endif
-                </div>
-                <div class="mt-3 mb-3 row col-8">
-                    <label class="mt-2 h5"><?= ucfirst(translate('quantity')) ?></label>
-                    @if($product)
-                        <input name="quantity" id="quantity" type="text" class="form-control rounded" value="{{$product->quantity}}">
-                    @else
-                        <input name="quantity" id="quantity" type="text" class="form-control rounded">
-                    @endif
-                </div>
-                <div class="mt-3 mb-3 row col-8">
-                    <label class="mt-2 h5"><?= ucfirst(translate('product details')) ?></label>
-                    @if($product)
-                        <textarea class="form-control" name="productDetails" rows="6">{{$product->productDetails}}</textarea>
-                    @else
-                        <textarea class="form-control" name="productDetails" rows="6"></textarea>
-                    @endif
-                </div>
-                <div class="mt-3 mb-3 row col-8">
-                    <input id="browse" type="file" name="files[]" multiple class="myfrm" style="z-index: 1;" onchange="readFile()">
-                    <div id="preview">
+        <div class="right-side col-sm-12 col-md-9 m-auto">
+            <p class="h5 mt-5 mb-5">
+                @if($product)
+                    <?= ucfirst(translate('edit product')) ?>
+                @else
+                    <?= ucfirst(translate('create product')) ?>
+                @endif
+            </p>
+            <div class="action-container w-100">
+                {{ \Form::open(['route' => \App\Helpers\Functions::viewLink('dashboard/product/save'), 'enctype' => 'multipart/form-data', 'id' => 'saveProduct-form', 'class' => 'container', 'method' => 'post'])}}
+                    <div class="mt-3 mb-3 row col-8">
+                        <label class="mt-2 h5"><?= ucfirst(translate('product name')) ?></label>
                         @if($product)
-                            <img class="img-fluid" src="{{$product->getPhotoAsBase64()}}">
+                            <input name="name" type="text" value="{{$product->name}}" class="form-control rounded">
+                        @else
+                            <input name="name" type="text" class="form-control rounded">
                         @endif
                     </div>
-                </div>
-                @if($product)
-                    <div>
-                        {{ Form::hidden('productId', $product->id) }}
+                    <div class="mt-3 mb-3 row col-8">
+                        <label class="mt-2 h5"><?= ucfirst(translate('category')) ?></label>
+                        {{ Form::select('category', $category ) }}
                     </div>
-                @endif
-                <div class="mt-3 mb-3 row col-8">
-                    {{Form::button(ucfirst(translate('save')), ['id' => 'sendForm', 'class' => 'btn btn-success button-aspect'])}}
-                </div>
-            {{ Form::close() }}
+                    <div class="mt-3 mb-3 row col-8">
+                        <label class="mt-2 h5"><?= ucfirst(translate('price')) ?></label>
+                        @if($product)
+                            <input name="price" id="price" type="text" class="form-control rounded" value="{{$product->price}}">
+                        @else
+                            <input name="price" id="price" type="text" class="form-control rounded">
+                        @endif
+                    </div>
+                    <div class="mt-3 mb-3 row col-8">
+                        <label class="mt-2 h5"><?= ucfirst(translate('quantity')) ?></label>
+                        @if($product)
+                            <input name="quantity" id="quantity" type="text" class="form-control rounded" value="{{$product->quantity}}">
+                        @else
+                            <input name="quantity" id="quantity" type="text" class="form-control rounded">
+                        @endif
+                    </div>
+                    <div class="mt-3 mb-3 row col-8">
+                        <label class="mt-2 h5"><?= ucfirst(translate('product details')) ?></label>
+                        @if($product)
+                            <textarea class="form-control" name="productDetails" rows="6">{{$product->productDetails}}</textarea>
+                        @else
+                            <textarea class="form-control" name="productDetails" rows="6"></textarea>
+                        @endif
+                    </div>
+                    <div class="mt-3 mb-3 row col-8">
+                        <input id="browse" type="file" name="files[]" multiple class="myfrm" style="z-index: 1;" onchange="readFile()">
+                        <div id="preview">
+                            @if($product)
+                                <img class="img-fluid" src="{{$product->getPhotoAsBase64()}}">
+                            @endif
+                        </div>
+                    </div>
+                    @if($product)
+                        <div>
+                            {{ Form::hidden('productId', $product->id) }}
+                        </div>
+                    @endif
+                    <div class="mt-3 mb-3 row col-8">
+                        {{Form::button(ucfirst(translate('save')), ['id' => 'sendForm', 'class' => 'btn btn-success button-aspect'])}}
+                    </div>
+                {{ Form::close() }}
+            </div>
         </div>
     </section>
 </x-app-layout>

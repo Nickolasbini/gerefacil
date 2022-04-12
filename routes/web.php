@@ -28,13 +28,11 @@ Route::middleware(['master'])->group(function(){
     Route::post('user/checkserial', 'UserController@checkSerial')->name('check.serial');
 });
 
-// dashboard routes
-Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->get('/dashboard/home', function () {
-    return view('dashboard');
-})->name('dashboard');
-
 Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->get('/dashboard/product', function () {
-    return view('dashboard/product_views/product_home');
+    $products = \App\Models\Product::where('id', '>', 0)->where('user_id', session()->get('authUser-id'))->orderBy('created_at', 'desc')->paginate(10);
+    return view('dashboard/product_views/product_home')->with([
+        'products' => $products
+    ]);
 })->name('dashboard.product');
 
 Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->get('/dashboard/sale', function () {
@@ -50,14 +48,19 @@ Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActio
 })->name('dashboard.report');
 
 Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->group(function () {
+    Route::get('/', 'DashboardController@dashboard')->name('dashboard');
+    Route::get('home', 'DashboardController@dashboard')->name('dashboard/home');
+
     Route::get('getprofilephoto', [UserController::class, 'getProfilePhoto']);
 
     // products routes
-    Route::get('product/list/{page?}', 'ProductController@list')->name('product.list');
+    Route::get('product/list', 'ProductController@list')->name('product.list');
     Route::get('product/save/{productId?}', 'ProductController@create')->name('product.create');
     
     Route::post('product/save/{productId?}', 'ProductController@save')->name('product.save');
     Route::post('product/remove', 'ProductController@remove')->name('product.remove');
+
+    Route::post('product/handlelikes', 'ProductController@handleLike')->name('product.handlelikes');
 
     // products routes
     Route::get('sale/save', [SaleController::class, 'save']);

@@ -5,25 +5,13 @@
     </button>
   
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto col-md-6">
+      <ul class="navbar-nav mr-auto col-md-4">
         <li class="nav-item active">
           <a class="nav-link" href="#"><?= ucfirst(translate('products')) ?></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#"><?= ucfirst(translate('categories')) ?></a>
         </li>
-        @if(Auth::user())
-            <li class="nav-item">
-                <a class="nav-link" href="{{\App\Helpers\Functions::viewLink('dashboard/home'); }}"><?= ucfirst(translate('menu')) ?></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href=""><?= ucfirst(translate('logout')) ?></a>
-            </li>
-        @else
-          <li class="nav-item">
-              <a class="nav-link" href="{{\App\Helpers\Functions::viewLink('register')}}"><?= ucfirst(translate('register')) ?></a>
-          </li>
-        @endif
       </ul>
       @if(isset($enableSearch))
         <div id="menu-header-searcher" action="{{$enableSearch}}" class="row col-md-6">
@@ -31,6 +19,30 @@
             <a class="btn btn-primary col-md-2" onclick="searchProducts()" style="margin-left: -5px;">Search</a>
         </div>
       @endif
+      <div class="col-md-2">
+        <ul class="navbar-nav mr-auto d-flex justify-content-around">
+          @if(Auth::user())
+              <li class="nav-item">
+                  <a class="nav-link" href="{{\App\Helpers\Functions::viewLink('dashboard/home'); }}"><?= ucfirst(translate('menu')) ?></a>
+              </li>
+              <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();">
+                      <?= ucfirst(translate('log out')) ?>
+                  </a>
+                </li>
+              </form>
+          @else
+            <li class="nav-item">
+                <a class="nav-link" href="{{\App\Helpers\Functions::viewLink('login')}}"><?= ucfirst(translate('login')) ?></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{\App\Helpers\Functions::viewLink('register')}}"><?= ucfirst(translate('register')) ?></a>
+            </li>
+          @endif
+        </ul>
+      </div>
     </div>
 </nav>
 <script>

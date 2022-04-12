@@ -99,11 +99,9 @@ class ProductController extends Controller
         $limit  = $this->getParameter('limit', 10);
         $filter = $this->getParameter('filter');
         $page   = $this->getParameter('page', 1);
-
-        $products = Product::where('id', '>', 0)->paginate($limit);
-
+        $products = Product::where('id', '>', 0)->where('user_id', $this->getLoggedUserId())->orderBy('created_at', 'desc')->paginate($limit);
         return view('dashboard/product_home')->with([
-            
+            'products' => $products
         ]);
     }
 
@@ -130,6 +128,8 @@ class ProductController extends Controller
                 'message' => Functions::translateAndSetToSession('invalid')
             ]);
         }
+        $documentObj = new Document();
+        $docId = $product->document;
         $result = $product->delete();
         if(!$result){
             return json_encode([
@@ -137,6 +137,7 @@ class ProductController extends Controller
                 'message' => Functions::translateAndSetToSession('an error occured')
             ]);
         }
+        $documentObj->removeObjectAndFile($docId);
         return json_encode([
             'success' => true,
             'message' => Functions::translateAndSetToSession('removed with success')
@@ -159,5 +160,24 @@ class ProductController extends Controller
         }
         $allCategories = $this->getIndexedArray('id', 'name', (new Category())->getMyCategories());
         return view('dashboard/product_views/create_product')->with(['product' => $productObj, 'category' => $allCategories]);
+    }
+
+    // adds or removes 1 like
+    public function handleLike()
+    {
+        $productId = $this->getParameter('productId');
+        $productLikeObj = new \App\Models\ProductLikes();
+        $result = $productLikeObj->addLike($productId);
+        if($result != 'added' && $result != 'removed'){
+            return json_encode([
+                'success' => false,
+                'message' => ucfirst(translate('no changes'))
+            ]);
+        }
+        return json_encode([
+            'success' => true,
+            'message' => ucfirst(translate('updated')),
+            'added'   => ($result == 'added' ? true : false)
+        ]);
     }
 }

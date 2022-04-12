@@ -144,7 +144,7 @@ class Document extends Model
         }
         $path = storage_path($thePath);
         if(!is_dir($path)){
-            mkdir($basePath, 0777);
+            mkdir($path, 0777);
         }
         Storage::makeDirectory($path);
         $pathToImg = (is_object($photo) ? $photo->getRealPath() : $photo);

@@ -47,6 +47,11 @@
 <script src="{{ asset('externalfeatures/bootstrap.js') }}"></script>
 
 <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    });
     /* Modal methods */
     function openModal(close = false){
         if(close == false){

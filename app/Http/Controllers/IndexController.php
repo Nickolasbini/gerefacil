@@ -51,6 +51,16 @@ class IndexController extends Controller
             'cheaper'   => ucfirst(translate('cheaper')),
             'expensive' => ucfirst(translate('expensive'))
         ];
+        if(Auth::user()){
+            foreach($products as $product){
+                $productLikeObj = \App\Models\ProductLikes::where('product_id', $product->id)->where('user_id', Auth::user()->id)->get();
+                if(count($productLikeObj) > 0){
+                    $product->iLiked = true;
+                }else{
+                    $product->iLiked = false;
+                }
+            }
+        }
         return view('home')->with([
             'products'   => $products,
             'categories' => $categories,

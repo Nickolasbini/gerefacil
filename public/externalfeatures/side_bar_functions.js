@@ -17,12 +17,14 @@ function toggleSidebar() {
         document.getElementsByClassName("action-container")[0].style.marginLeft = "300px";
         $('.side-bar-option').find('a').show();
         $('.side-bar-option').removeClass('p-3');
+        $('#side-bar-button').hide();
         this.mini = false;
     } else {
         document.getElementsByClassName("mySlidebar")[0].style.width = "85px";
         document.getElementsByClassName("action-container")[0].style.marginLeft = "85px";
         $('.side-bar-option').find('a').hide();
         $('.side-bar-option').addClass('p-3');
+        $('#side-bar-button').show();
         this.mini = true;
     }
 }

@@ -22,6 +22,7 @@ class Master extends \App\Http\Controllers\Controller
         $this->setMasterAdminData();
         $this->getUserLanguageToSession();
         Self::createViewMessageSession();
+        $this->createBaseCategories();
         $this->setURI($request);
         return $next($request);
     }
@@ -107,5 +108,32 @@ class Master extends \App\Http\Controllers\Controller
     public function setURI($request)
     {
         $this->session->put('uri', $request->path());
+    }
+
+    // creates the base categories in case they are not yet created
+    public function createBaseCategories()
+    {
+        $categoriesFile = json_decode(file_get_contents(storage_path('app/admin/defaultCategories.json')), true);
+        if(!$categoriesFile){
+            return;
+        }
+        if(session()->get('alreadyCheckedCategoriesFile')){
+            return;
+        }
+        $masterAdmin = \App\Models\User::where('master_admin', 1)->limit(1)->get();
+        if(count($masterAdmin) < 1){
+            return;
+        }
+        $idToUse = $masterAdmin[0]->id;
+        foreach($categoriesFile['categories'] as $categoryName){
+            $categoryObj = new \App\Models\Category();
+            if(count( $categoryObj::where('name', $categoryName)->get() ) > 0){
+                continue;
+            }
+            $categoryObj->name    = $categoryName;
+            $categoryObj->user_id = $idToUse;
+            $categoryObj->save();
+        }
+        session()->put('alreadyCheckedCategoriesFile', true);
     }
 }
