@@ -19,7 +19,9 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
     {
         $this->insertAuthenticatedUserDataToSession($request->user());
 
-        $this->separateUsers($request);
+        if($this->separateUsers($request)){
+            return redirect('/user/profile');
+        }
 
         return $next($request);
     }
@@ -56,12 +58,12 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
             return;
         }
         if($requestURI == '/dashboard'){
-            exit(redirect('/user/profile'));
+            return true;
         }
         // check the exception
         if(in_array($requestURI, $exceptionsForNonAdmins)){
             return;
         }
-        exit(redirect('/user/profile'));
+        return true;
     }
 }

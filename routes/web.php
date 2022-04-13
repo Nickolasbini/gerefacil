@@ -26,6 +26,12 @@ Route::middleware(['master'])->group(function(){
     Route::post('user/validatecpf', 'UserController@validateCPF')->name('validate.cpf');
     Route::post('user/getcepdata', 'UserController@getCEPData')->name('get.cep.data');
     Route::post('user/checkserial', 'UserController@checkSerial')->name('check.serial');
+
+    // public routes
+    Route::get('product/detail/{productId?}', 'ProductController@productDetail')->name('product.detail');
+
+    // clean session viewMessage
+    Route::post('cleansessionmessage', 'UserController@cleanViewMessage')->name('cleansessionmessage');
 });
 
 Route::middleware(['master', 'auth:sanctum', 'verified', 'authenticatedUserActions'])->get('/dashboard/product', function () {
@@ -71,7 +77,4 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
 
     // products routes
     Route::get('report/save', [ReportController::class, 'save']);
-
-    // clean session viewMessage
-    Route::post('cleansessionmessage', 'UserController@cleanViewMessage')->name('cleansessionmessage');
 });

@@ -25,7 +25,7 @@
     var viewMessage = "{{ Session::get('viewMessage') }}";
     if(viewMessage != ''){
         $.ajax({
-            url: "{{ \App\Helpers\Functions::viewLink('dashboard/cleansessionmessage') }}",
+            url: "{{ \App\Helpers\Functions::viewLink('cleansessionmessage') }}",
             type: 'POST'
         });
     }

@@ -22,7 +22,11 @@ class Product extends Model {
         'quantity',
         'user_id',
         'document',
-        'likes'
+        'likes',
+        'weight',
+        'length',
+        'width',
+        'height'
     ];
 
     // setters

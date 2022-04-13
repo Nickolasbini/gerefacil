@@ -24,6 +24,10 @@ return new class extends Migration
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->integer('likes')->default('0');
+            $table->integer('weight')->default('0');
+            $table->integer('length')->default('0');
+            $table->integer('width')->default('0');
+            $table->integer('height')->default('0');
             $table->timestamps();
         });
     }

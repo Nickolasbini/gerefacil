@@ -22,7 +22,7 @@ class Master extends \App\Http\Controllers\Controller
         $this->setMasterAdminData();
         $this->getUserLanguageToSession();
         Self::createViewMessageSession();
-        //$this->createBaseCategories();
+        $this->createBaseCategories();
         $this->setURI($request);
         return $next($request);
     }

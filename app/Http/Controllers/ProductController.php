@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\TableGenerator;
 use App\Helpers\Functions;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Document;
+use App\Models\Shipment;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller 
 {
@@ -27,8 +29,16 @@ class ProductController extends Controller
         $price          = str_replace(',', '.', $price);
         $quantity       = $this->getParameter('quantity');
         $images         = $this->getParameter('files');
-        if(!$name || !$categoryId || !$price || !$quantity || !$productDetails || !$images){
+        $weight         = $this->getParameter('weight');
+        $length         = $this->getParameter('length');
+        $width          = $this->getParameter('width');
+        $height         = $this->getParameter('height');
+        if(!$name || !$categoryId || !$price || !$quantity || !$productDetails || !$images || !$weight || !$length || !$width || !$height){
             Functions::translateAndSetToSession('required data missing', 'failure');
+            return Functions::redirectToURI();
+        }
+        if($height < 10){
+            Functions::translateAndSetToSession('height must be higher than 9', 'failure');
             return Functions::redirectToURI();
         }
         $productObj = new Product();
@@ -46,7 +56,7 @@ class ProductController extends Controller
             Functions::translateAndSetToSession('category is invalid', 'failure');
             return Functions::redirectToURI();
         }
-        $documentId = null;
+        $documentId = ($id ? $productObj->document : null);
         if($images && count($images) > 0){
             $cropData = [
                 'imgWidth'  => 160,
@@ -77,7 +87,17 @@ class ProductController extends Controller
         }
         $result = Product::updateOrCreate(
             ['id' => $id],
-            ['name' => $name, 'category_id' => $categoryId, 'productDetails' => $productDetails, 'price' => Functions::parsePriceToDB($price), 'quantity' => $quantity, 'user_id' => $this->getLoggedUserId(), 'document' => $documentId]
+            [
+                'name' => $name,
+                'category_id' => $categoryId,
+                'productDetails' => $productDetails, 
+                'price' => Functions::parsePriceToDB($price), 
+                'quantity' => $quantity,
+                'weight' => $weight,
+                'length' => $length,
+                'width' => $width,
+                'user_id' => $this->getLoggedUserId(), 
+                'document' => $documentId]
         );
         if(!$result){
             Functions::translateAndSetToSession('an error occured, try again later', 'failure');
@@ -189,8 +209,36 @@ class ProductController extends Controller
             Functions::translateAndSetToSession('invalid product', 'failure');
             return redirect()->back();
         }
+        $productOwnerUser = User::find($product->user_id);
+        $productOwnerCep = $productOwnerUser->cep;
+
+        $cepData = [
+            'value'       => null,
+            'deliverTime' => null
+        ];
+        if(Auth::user()){
+            if(Auth::user()->id != $product->user_id){
+                $shipment = new \App\Models\Shipment(
+                    Auth::user()->cep, 
+                    $productOwnerCep, 
+                    $product->weight, 
+                    $product->length, 
+                    $product->height, 
+                    $product->height, 
+                    $product->price
+                );
+                $cepData = [
+                    'value'       => $shipment->getValor(),
+                    'deliverTime' => $shipment->getPrazoEntrega()
+                ];
+            }
+        }
+
         return view('dashboard/product_views/product_detail')->with([
-            'product' => $product
+            'product'         => $product,
+            'admin'           => (Auth::user() && Auth::user()->administrator ? true : false),
+            'productOwnerCep' => $productOwnerCep,
+            'cepData'         => $cepData
         ]);
     }
 }

@@ -27,9 +27,12 @@
                 @if($products->count() > 0)
                     @foreach($products->items() as $product)
                         <div class="col-sm-10 col-md-3 m-1 p-3 pt-4 pb-4 border rounded text-center">
-                            <div class="w-100 text-right">
+                            <div class="d-flex justify-content-between mb-3">
                                 @if(Auth::user() && Auth::user()->id == $product->user_id)
-                                    <a class="btn btn-danger mb-1" onclick="removeProduct(<?= $product->id ?>)" title="<?= ucfirst(translate('remove')) ?>">
+                                    <a class="btn btn-secondary mb-1 text-left" href="{{\App\Helpers\Functions::viewLink('dashboard/product/save/'.$product->id)}}" title="<?= ucfirst(translate('edit')) ?>">
+                                        <?= ucfirst(translate('edit')) ?>
+                                    </a>
+                                    <a class="btn btn-danger mb-1 text-right" onclick="removeProduct(<?= $product->id ?>)" title="<?= ucfirst(translate('remove')) ?>">
                                         X
                                     </a>
                                 @endif
@@ -45,15 +48,15 @@
                             </div>
                             <div>
                                 @if($product->promotion)
-                                    <small class="prior-price">Valor anterior</small>
-                                    <p>{{\App\Helpers\Functions::formatMoney($product->price)}} (Promoção)</p>
+                                    <small class="prior-price"><?= ucfirst(translate('former value')) ?></small>
+                                    <p>{{\App\Helpers\Functions::formatMoney($product->price)}} (<?= ucfirst(translate('promotion')) ?>)</p>
                                 @else
                                     <p>
                                         {{\App\Helpers\Functions::formatMoney($product->price)}}
                                     </p>
                                 @endif
                             </div>
-                            <a class="btn btn-dark w-100 opacity-hover" href="{{\App\Helpers\Functions::viewLink('product/detail/'.$product->id)}}">Eu quero</a>
+                            <a class="btn btn-dark w-100 opacity-hover" href="{{\App\Helpers\Functions::viewLink('product/detail/'.$product->id)}}"><?= ucfirst(translate('details')) ?></a>
                         </div>
                     @endforeach
                     <div class="mt-3">
@@ -75,6 +78,9 @@
         </div>
     </div>
 </x-app-layout>
+
+@include('main_footer')
+
 <script>
     var currentPage = "{{ isset($pageNumber) ? $pageNumber : 1 }}";
     // setting url to edit buttons
@@ -131,6 +137,9 @@
     });
 
     function removeProduct(productId = null){
+        if("{{Auth::user()}}" == ''){
+            return;
+        }
         $.ajax({
             url: "{{ \App\Helpers\Functions::viewLink('dashboard/product/remove') }}",
             method: 'Post',

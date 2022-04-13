@@ -1,9 +1,9 @@
 <?php $data = \App\Helpers\Functions::adminRelatedDataArray(); ?>
 <?php $bgColor = (isset($bgColor) ? $bgColor : 'light'); ?>
 @if($bgColor == 'light')
-    <footer id="footer" class="container-fluid pt-5 pb-5" style="background-color:rgba(184, 184, 184, 0.14)">
+    <footer id="footer" class="container-fluid pt-5 pb-5 mt-5" style="background-color:rgba(184, 184, 184, 0.14)">
 @elseif($bgColor == 'dark')
-    <footer id="footer" class="container-fluid pt-5 pb-5" style="background-color:rgba(17, 17, 17, 0.25)">
+    <footer id="footer" class="container-fluid pt-5 pb-5 mt-5" style="background-color:rgba(17, 17, 17, 0.25)">
 @endif
     <div class="row col-sm-10 col-md-12 m-auto d-flex justify-content-around">
         <div class="col-sm-10 col-md-3 mt-4-sm">
@@ -68,6 +68,7 @@
 </section>
 
 <script>
+    var screenWidht = $(window).width();
     function checkFooterIcons(){
 		if(screenWidht < 760){
 			$('.color-social-icon').off('mouseenter');
