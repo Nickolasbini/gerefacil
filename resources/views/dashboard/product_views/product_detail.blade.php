@@ -10,7 +10,7 @@
     <section id="productSave" class="d-flex d-flex justify-content-center mt-5">
         <div class="col-sm-10 col-md-3 m-1 p-3 pt-4 pb-4 border rounded text-center">
             <div class="w-100 text-right">
-                @if(Auth::user() && Auth::user()->id == $product->id)
+                @if(Auth::user() && Auth::user()->id == $product->user_id)
                     <a class="btn btn-danger mb-1" onclick="removeProduct(<?= $product->id ?>)" title="<?= ucfirst(translate('remove')) ?>">
                         X
                     </a>
