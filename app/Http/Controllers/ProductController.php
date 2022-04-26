@@ -35,26 +35,36 @@ class ProductController extends Controller
         $height         = $this->getParameter('height');
         if(!$name || !$categoryId || !$price || !$quantity || !$productDetails || !$images || !$weight || !$length || !$width || !$height){
             Functions::translateAndSetToSession('required data missing', 'failure');
-            return Functions::redirectToURI();
+            return redirect()->back();
         }
         if($height < 10){
             Functions::translateAndSetToSession('height must be higher than 9', 'failure');
-            return Functions::redirectToURI();
+            return redirect()->back();
         }
         $productObj = new Product();
         if($id){
             $product = $productObj->find($id);
             if(!$product){
                 Functions::translateAndSetToSession('invalid', 'failure');
-                Functions::redirectToURI();
+                redirect()->back();
             }
             $productObj = $product;
+            if(!$productObj->document){
+                Functions::translateAndSetToSession('at least a photo is required', 'failure');
+                return redirect()->back();
+            }
+        }else{
+            if(count($images) == 0){
+                Functions::translateAndSetToSession('at least a photo is required', 'failure');
+                return redirect()->back();
+            }
         }
+        
         $categoryObj = new Category();
         $category = $categoryObj->find($categoryId);
         if(!$category){
             Functions::translateAndSetToSession('category is invalid', 'failure');
-            return Functions::redirectToURI();
+            return redirect()->back();
         }
         $documentId = ($id ? $productObj->document : null);
         if($images && count($images) > 0){
@@ -83,7 +93,7 @@ class ProductController extends Controller
         $userObj = $category->getUser();
         if($userObj->id != $this->getLoggedUserId() && !$userObj->master_admin){
             Functions::translateAndSetToSession('category can not be user', 'failure');
-            return Functions::redirectToURI();
+            return redirect()->back();
         }
         $result = Product::updateOrCreate(
             ['id' => $id],
@@ -97,11 +107,13 @@ class ProductController extends Controller
                 'length' => $length,
                 'width' => $width,
                 'user_id' => $this->getLoggedUserId(), 
-                'document' => $documentId]
+                'document' => $documentId,
+                'height' => $height
+            ]
         );
         if(!$result){
             Functions::translateAndSetToSession('an error occured, try again later', 'failure');
-            return Functions::redirectToURI();
+            return redirect()->back();
         }
         $message = ($id ? ucfirst(translate('product updated')) : ucfirst(translate('product created')));
         Functions::translateAndSetToSession($message, 'success');
@@ -204,6 +216,7 @@ class ProductController extends Controller
     // gather product detail and calls its view
     public function productDetail($productId = null)
     {
+        $typeOfShipment = $this->getParameter('sipmentType');
         $product = Product::find($productId);
         if(!$product){
             Functions::translateAndSetToSession('invalid product', 'failure');
@@ -211,34 +224,83 @@ class ProductController extends Controller
         }
         $productOwnerUser = User::find($product->user_id);
         $productOwnerCep = $productOwnerUser->cep;
-
         $cepData = [
             'value'       => null,
             'deliverTime' => null
         ];
-        if(Auth::user()){
-            if(Auth::user()->id != $product->user_id){
-                $shipment = new \App\Models\Shipment(
-                    Auth::user()->cep, 
-                    $productOwnerCep, 
-                    $product->weight, 
-                    $product->length, 
-                    $product->height, 
-                    $product->height, 
-                    $product->price
-                );
-                $cepData = [
-                    'value'       => $shipment->getValor(),
-                    'deliverTime' => $shipment->getPrazoEntrega()
-                ];
-            }
-        }
-
+        $shipment = new \App\Models\Shipment(
+            (Auth::user() ? Auth::user()->cep : ''), 
+            $productOwnerCep, 
+            $product->weight,
+            $product->length, 
+            $product->height, 
+            $product->height, 
+            $product->price,
+            $typeOfShipment
+        );
+        $cepData = [
+            'value'       => $shipment->getValor(),
+            'deliverTime' => $shipment->getPrazoEntrega()
+        ];
         return view('dashboard/product_views/product_detail')->with([
             'product'         => $product,
             'admin'           => (Auth::user() && Auth::user()->administrator ? true : false),
             'productOwnerCep' => $productOwnerCep,
-            'cepData'         => $cepData
+            'cepData'         => $cepData,
+            'shipmentTypes'   => $shipment->getShipmentTypes(),
+            'selectedShipmentType' => $shipment->getShipmentTypes()['Sedex']
+        ]);
+    }
+
+    // calculates shipment accordingly to sent data
+    public function calculateShipment()
+    {
+        $productId    = $this->getParameter('productId');
+        $cep          = $this->getParameter('cep');
+        $shipmentType = $this->getParameter('shipmentType');
+        if(!$cep || !$shipmentType){
+            return json_encode([
+                'success' => false,
+                'message' => 'data missing'
+            ]);
+        }
+        if(!$productId){
+            return json_encode([
+                'success' => false,
+                'message' => 'no product selected'
+            ]);
+        }
+        $productObj = Product::find($productId);
+        if(!$productObj){
+            return json_encode([
+                'success' => false,
+                'message' => 'invalid product'
+            ]);
+        }
+        $productOwnerUser = User::find($productObj->user_id);
+        $productOwnerCep = $productOwnerUser->cep;
+        $cepData = [
+            'value'       => null,
+            'deliverTime' => null
+        ];
+        $shipment = new \App\Models\Shipment(
+            $cep, 
+            $productOwnerCep, 
+            $productObj->weight,
+            $productObj->length, 
+            $productObj->height, 
+            $productObj->height, 
+            $productObj->price,
+            $shipmentType
+        );
+        $cepData = [
+            'value'       => Functions::formatMoney($shipment->getValor()),
+            'deliverTime' => $shipment->getPrazoEntrega()
+        ];
+        return json_encode([
+            'success' => true,
+            'message' => 'data gathered',
+            'content' => $cepData
         ]);
     }
 }

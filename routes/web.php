@@ -21,7 +21,7 @@ use App\Http\Controllers\CategoryController;
 
 // normal routes
 Route::middleware(['master'])->group(function(){ 
-    Route::get('/{page?}', 'IndexController@homePage')->name('/');
+    Route::get('/', 'IndexController@homePage')->name('/');
 
     Route::post('user/validatecpf', 'UserController@validateCPF')->name('validate.cpf');
     Route::post('user/getcepdata', 'UserController@getCEPData')->name('get.cep.data');
@@ -29,6 +29,7 @@ Route::middleware(['master'])->group(function(){
 
     // public routes
     Route::get('product/detail/{productId?}', 'ProductController@productDetail')->name('product.detail');
+    Route::post('calculateshipment', 'ProductController@calculateShipment')->name('calculate.shipment');
 
     // clean session viewMessage
     Route::post('cleansessionmessage', 'UserController@cleanViewMessage')->name('cleansessionmessage');
@@ -60,7 +61,6 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
     Route::get('getprofilephoto', [UserController::class, 'getProfilePhoto']);
 
     // products routes
-    Route::get('product/detail/{productId?}', 'ProductController@productDetail')->name('product.detail');
     Route::get('product/list', 'ProductController@list')->name('product.list');
     Route::get('product/save/{productId?}', 'ProductController@create')->name('product.create');
     

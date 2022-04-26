@@ -58,31 +58,48 @@
                             <input name="quantity" id="quantity" type="text" class="form-control rounded">
                         @endif
                     </div>
-                    <div class="mt-3 mb-3 row col-8">
-                        <label class="mt-2 h5"><?= ucfirst(translate('weight')) ?></label>
-                        @if($product)
-                            <input name="weight" id="weight" type="text" class="form-control rounded" value="{{$product->weight}}">
-                        @else
-                            <input name="weight" id="weight" type="text" class="form-control rounded">
-                        @endif
+                    <div class="mt-5 mb-3 row col-8 border-t">
+                        <label class="mt-2 h5"><?= ucfirst(translate('especifications')) ?> <small>(Just numbers)</small></label>
                     </div>
                     <div class="mt-3 mb-3 row col-8">
-                        <label class="mt-2 h5"><?= ucfirst(translate('length')) ?></label>
-                        @if($product)
-                            <input name="length" id="length" type="text" class="form-control rounded" value="{{$product->length}}">
-                        @else
-                            <input name="length" id="length" type="text" class="form-control rounded">
-                        @endif
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="mt-2 h5"><?= ucfirst(translate('weight')) ?></label>
+                                @if($product)
+                                    <input name="weight" id="weight" type="text" class="form-control rounded just-numbers" value="{{$product->weight}}">
+                                @else
+                                    <input name="weight" id="weight" type="text" class="form-control rounded just-numbers">
+                                @endif
+                            </div>
+                            <div class="col-6">
+                                <label class="mt-2 h5"><?= ucfirst(translate('length')) ?></label>
+                                @if($product)
+                                    <input name="length" id="length" type="text" class="form-control rounded just-numbers" value="{{$product->length}}">
+                                @else
+                                    <input name="length" id="length" type="text" class="form-control rounded just-numbers">
+                                @endif
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="mt-2 h5"><?= ucfirst(translate('width')) ?></label>
+                                @if($product)
+                                    <input name="width" id="width" type="text" class="form-control rounded just-numbers" value="{{$product->width}}">
+                                @else
+                                    <input name="width" id="width" type="text" class="form-control rounded just-numbers">
+                                @endif
+                            </div>
+                            <div class="col-6">
+                                <label class="mt-2 h5"><?= ucfirst(translate('height')) ?></label>
+                                @if($product)
+                                    <input name="height" id="height" type="text" class="form-control rounded just-numbers" value="{{$product->height}}" placeholder="{{ucfirst(translate('minimun is 10 cm'))}}">
+                                @else
+                                    <input name="height" id="height" type="text" class="form-control rounded just-numbers" placeholder="{{ucfirst(translate('minimun is 10 cm'))}}">
+                                @endif
+                            </div>
+                        </div>
                     </div>
-                    <div class="mt-3 mb-3 row col-8">
-                        <label class="mt-2 h5"><?= ucfirst(translate('width')) ?></label>
-                        @if($product)
-                            <input name="width" id="width" type="text" class="form-control rounded" value="{{$product->width}}">
-                        @else
-                            <input name="width" id="width" type="text" class="form-control rounded">
-                        @endif
-                    </div>
-                    <div class="mt-3 mb-3 row col-8">
+                    <div class="mt-2 mb-3 row col-8 border-t pt-5">
                         <label class="mt-2 h5"><?= ucfirst(translate('product details')) ?></label>
                         @if($product)
                             <textarea class="form-control" name="productDetails" rows="6">{{$product->productDetails}}</textarea>
@@ -121,6 +138,14 @@
         if(productId != ''){
             var parsedPrice = parseToCurrency($('#price').val());
             $('#price').val(parsedPrice);
+            var tagsToFormat = $('.just-numbers');
+            tagsToFormat.each(function(){
+                var value  = $(this).val();
+                var typeId = $(this).attr('id');
+                var formatedValue = formatByType(typeId, value);
+                $(this).val(formatedValue);
+            });
+            
         }
     });
 
@@ -212,6 +237,73 @@
     $('#clickOnImgInput').on('click', function(){
         $('#browse').click();
     });
+
+    // related to inputs of the specifications
+    $('.just-numbers').on('input', function(){
+        var value  = $(this).val();
+        var typeId = $(this).attr('id');
+        var correctValue = onlyNumbers(value);
+        var fomatedValue = formatByType(typeId, correctValue);
+        $(this).val(fomatedValue);
+    });
+
+    function onlyCommaAndNumbers(value){
+        return value.replace(/[^\d,]+/g, '');
+    }
+
+    function onlyNumbers(value, asInteger = false){
+        var formatedValue = value.replace(/\D/g, "");
+        return (asInteger == true ? parseInt(formatedValue) : formatedValue);
+    }
+
+    function formatByType(type, value){
+        var newValue = '';
+        switch(type){
+            case 'weight':
+                newValue = value.replace("Kg", "");
+                value = (newValue == '' ? '' : newValue + ' Kg');
+            break;
+            case 'width':
+            case 'length':
+            case 'height':
+                newValue = value.replace("Cm", "");
+                value = (newValue == '' ? '' : newValue + ' Cm');
+            break;
+            default:
+                return;
+            break;
+        }
+        return value;
+    }
+
+    $('#saveProduct-form').on('submit', function(e){
+        if(checkProductData() == false){
+            e.preventDefault(e);
+        }
+    });
+
+    function checkProductData(){
+        var weight = $('#weight').val();
+        weight = onlyNumbers(weight, true);
+        var width  = $('#width').val();
+        width = onlyNumbers(width, true);
+        var length = $('#length').val();
+        length = onlyNumbers(length, true);
+        var height = $('#height').val();
+        height = onlyNumbers(height, true);
+        if(weight == 0 | length == 0 || height == 0){
+            alert('a valid value must be informed');
+            return false;
+        }
+        if(height < 10){
+            alert('minimun is 10 cm');
+            return false;
+        }
+        $('#weight').val(weight);
+        $('#width').val(width);
+        $('#length').val(length);
+        $('#height').val(height);
+    }
 </script>
 
 <style>

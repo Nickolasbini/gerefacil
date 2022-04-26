@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Exception;
+
 /**
  * @name php-calcular-frete-correios
  */
@@ -12,15 +14,7 @@ class Shipment {
 
     private $typesOfShipment = [
         'Sedex' => '40010',
-        '40010' => 'Sedex',
-        'Sedex a Cobrar' => '40045',
-        '40045' => 'Sedex a Cobrar',
-        'PAC' => '41106',
-        '41106' => 'PAC',
-        'Sedex 10' => '40215',
-        '40215' => 'Sedex 10',
-        'e-Sedex' => '81019',
-        '81019' => 'e-Sedex'
+        'PAC' => '41106'
     ];
 
 	public function __construct(
@@ -33,14 +27,16 @@ class Shipment {
 		$valor,
         $service = 40010
 	){
+		$service = ($service ? $service : 40010);
+		if(!in_array($service, $this->typesOfShipment)){
+			throw new Exception("Invalid type of shipment", 400);
+		}
 		if ($comprimento < 16) $comprimento = 16;
-
 		$this->xml = simplexml_load_file(
 			Shipment::URL."nCdEmpresa=&sDsSenha=&sCepOrigem=".$CEPorigem."&sCepDestino=".$CEPdestino."&nVlPeso=".$peso."&nCdFormato=1&nVlComprimento=".$comprimento."&nVlAltura=".$altura."&nVlLargura=".$largura."&sCdMaoPropria=n&nVlValorDeclarado=".$valor."&sCdAvisoRecebimento=n&nCdServico=".$service."&nVlDiametro=0&StrRetorno=xml");
 		if(!$this->xml->Servicos->cServico){
 	        throw new Exception("Error Processing Request", 400);
 	    }
-
 	    if ($this->xml->Servicos->cServico->Erro != '0' && !$this->xml->Servicos->cServico->Erro == '010') {
 	    	throw new Exception($this->xml->Servicos->cServico->MsgErro, 400);
 	    }
@@ -93,6 +89,10 @@ class Shipment {
 
 		return $this->xml->Servicos->cServico->obsFim;
 
+	}
+
+	public function getShipmentTypes(){
+		return $this->typesOfShipment;
 	}
 
 }

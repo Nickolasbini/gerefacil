@@ -113,7 +113,7 @@ class Master extends \App\Http\Controllers\Controller
     // creates the base categories in case they are not yet created
     public function createBaseCategories()
     {
-        $categoriesFile = json_decode(file_get_contents(storage_path('app/admin/defaultCategories.json')), true);
+        $categoriesFile = json_decode(file_get_contents(asset('files/defaultCategories.json')), true);
         if(!$categoriesFile){
             return;
         }
