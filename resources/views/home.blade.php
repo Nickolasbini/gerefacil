@@ -5,7 +5,8 @@
     <section id="categories-list" class="container-fluid p-1">
         <div class="row text-center justify-content-center mt-5 mb-5 pb-5 border-b">
             @foreach($categories as $id => $category)
-                <div class="col-sm-10 col-md-3 m-2 btn btn-secondary row text-center justify-content-center category-button" data-categoryId="{{$id}}">
+                <?php $categoryChosen = ($id == $selectedCategory ? 'btn-dark' : 'btn-secondary') ?>
+                <div class="col-sm-10 col-md-3 m-2 btn {{$categoryChosen}} row text-center justify-content-center category-button" data-categoryId="{{$id}}">
                     {{ucfirst($category)}}
                 </div>    
             @endforeach
@@ -26,11 +27,6 @@
         <div class="ps-3 pe-3 row justify-content-around">
             @foreach($products->items() as $product)
                 <div class="col-sm-10 col-md-3 m-1 p-3 pt-4 pb-4 border rounded text-center">
-                    <div class="w-100 text-right">
-                        <?php $typeOfIcon  = ($product->iLiked == true ? 'images/hearth-icon.svg' : 'images/hearth-icon-black.svg') ?>
-                        <?php $typeOfTitle = ($product->iLiked == true ? ucfirst(translate('liked')) : ucfirst(translate('not liked'))) ?>
-                        <img class="cursor-pointer opacity-hover likeBtn historyItem-<?= $product->id ?>" src="{{asset($typeOfIcon)}} "data-historyId="<?= $product->id ?>" title="<?= $typeOfTitle ?>">
-                    </div>
                     <div class="ps-3 pe-3 mb-4 col-sm-10 col-md-8 m-auto">
                         <img class="img-fluid rounded" src="{{$product->getPhotoAsBase64()}}">
                     </div>
@@ -101,32 +97,6 @@
         var href = "{{\App\Helpers\Functions::viewLink('/')}}";
         href += '?filter=' + $(this).val();
         window.location.href = href;
-    });
-
-    $('.likeBtn').on('click', function(){
-        if("{{Auth::user()}}" == ''){
-            return;
-        }
-        var productId = $(this).attr('data-historyId');
-        $.ajax({
-            url: "{{ \App\Helpers\Functions::viewLink('dashboard/product/handlelikes') }}",
-            method: 'Post',
-            data: {'productId': productId},
-            dataType: 'JSON',
-            success: function(result){
-                var tag = $('.historyItem-'+productId);
-                if(result.success == true){
-                    console.log(result);
-                    if(result.added == true){
-                        tag.attr('src', "{{asset('images/hearth-icon.svg')}}");
-                        tag.attr('title', "<?= ucfirst(translate('liked')) ?>");
-                    }else{
-                        tag.attr('src', "{{asset('images/hearth-icon-black.svg')}}");
-                        tag.attr('title', "<?= ucfirst(translate('not liked')) ?>");
-                    }
-                }
-            }
-        });
     });
 </script>
 <style>

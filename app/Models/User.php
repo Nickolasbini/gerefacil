@@ -29,7 +29,8 @@ class User extends Authenticatable
         'password',
         'is_admin',
         'license_number',
-        'master_admin'
+        'master_admin',
+        'isVerified'
     ];
 
     /**

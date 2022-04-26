@@ -35,7 +35,7 @@ class Master extends \App\Http\Controllers\Controller
             'pt' => ['pt-BR'],
             'en' => ['en-US']
         ];
-
+        return;
         if(!array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER)){
             $languageOfUser = env('USER_LANGUAGE');
         }else{
@@ -77,7 +77,7 @@ class Master extends \App\Http\Controllers\Controller
         }
         $user = \App\Models\User::where('master_admin', 1)->get();
         if($user->count() < 1){
-            $user = \App\Models\User::create(['name' => 'masterAdmin', 'email' => 'gerefacil@gmail.com', 'password' => hash('sha256', env('MAIL_PASSWORD')), 'is_admin' => 1, 'master_admin' => 1]);
+            $user = \App\Models\User::create(['name' => 'masterAdmin', 'email' => 'gerefacil@gmail.com', 'password' => hash('sha256', env('MAIL_PASSWORD')), 'is_admin' => 1, 'master_admin' => 1, 'isVerified' => true]);
         }else{
             $user = $user[0];
         }

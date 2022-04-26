@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Document;
+use App\Models\Favorite;
 use App\Models\Shipment;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -228,6 +229,20 @@ class ProductController extends Controller
             'value'       => null,
             'deliverTime' => null
         ];
+        if(Auth::user()){
+            $productLikeObj = \App\Models\ProductLikes::where('product_id', $product->id)->where('user_id', Auth::user()->id)->get();
+            if(count($productLikeObj) > 0){
+                $product->iLiked = true;
+            }else{
+                $product->iLiked = false;
+            }
+            $favoriteObj = \App\Models\Favorite::where('product_id', $product->id)->where('user_id', Auth::user()->id)->get();
+            if(count($favoriteObj) > 0){
+                $product->myFavorite = true;
+            }else{
+                $product->myFavorite = false;
+            }
+        }
         $shipment = new \App\Models\Shipment(
             (Auth::user() ? Auth::user()->cep : ''), 
             $productOwnerCep, 
@@ -301,6 +316,51 @@ class ProductController extends Controller
             'success' => true,
             'message' => 'data gathered',
             'content' => $cepData
+        ]);
+    }
+
+    // favorites a product.
+    // obs: if you already favorited this product it will your favoritation else will favorite it
+    public function favoritePorduct()
+    {
+        $productId = $this->getParameter('productId');
+        if(!$productId){
+            return json_encode([
+                'success' => false,
+                'message' => 'no product selected'
+            ]);
+        }
+        $productObj = Product::find($productId);
+        if(!$productObj){
+            return json_encode([
+                'success' => false,
+                'message' => 'invalid product'
+            ]);
+        }
+        if(Auth::user()->id == $productObj->user_id){
+            return json_encode([
+                'success' => false,
+                'message' => "you can't favorite your own product"
+            ]);
+        }
+        $favoriteObj = Favorite::where('user_id', $this->getLoggedUserId())->where('product_id', $productId)->get();
+        if(count($favoriteObj) > 0){
+            $result  = $favoriteObj[0]->delete();
+            $message = ucfirst(translate('product removed from your favorites'));
+            $added = false;
+        }else{
+            $result = Favorite::create([
+                'product_id' => $productObj->id,
+                'user_id'    => $this->getLoggedUserId()
+            ]);
+            $message = ucfirst(translate('product added to your favorites'));
+            $added = true;
+            $result = (is_object($result) ? true : false);
+        }
+        return json_encode([
+            'success' => $result,
+            'message' => ($result ? $message : ucfirst(translate('an error occured, try again'))),
+            'added'   => $added
         ]);
     }
 }

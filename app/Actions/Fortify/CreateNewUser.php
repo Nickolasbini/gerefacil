@@ -31,6 +31,7 @@ class CreateNewUser implements CreatesNewUsers
 
         // checking whether the new user will be an admin
         if($input['serial'] == 000000000){
+            $input['serial'] == null;
             $input['is_admin'] = null;
         }else{
             $serial = new Serial();

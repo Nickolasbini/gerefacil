@@ -94,6 +94,14 @@
                         </a>
                     @endif
                 </div>
+                <div class="w-100 text-right">
+                    <?php $typeOfIcon  = ($product->iLiked == true ? asset('images/hearth-icon.svg') : asset('images/hearth-icon-black.svg') ) ?>
+                    <?php $typeOfTitle = ($product->iLiked == true ? ucfirst(translate('liked')) : ucfirst(translate('not liked'))) ?>
+                    <img class="cursor-pointer opacity-hover likeBtn historyItem-<?= $product->id ?>" src="{{asset($typeOfIcon)}} "data-historyId="<?= $product->id ?>" title="<?= $typeOfTitle ?>">
+                </div>
+                <a>
+                    {{asset('images/favorite-black.svg')}}
+                </a>
                 <div class="ps-3 pe-3 mb-4 col-sm-10 col-md-8 m-auto">
                     <img class="img-fluid rounded" src="{{$product->getPhotoAsBase64()}}">
                 </div>
@@ -131,6 +139,17 @@
                         X
                     </a>
                 @endif
+            </div>
+            <div class="w-100 text-left">
+                <?php $typeOfIconLike  = ($product->iLiked == true ? asset('images/hearth-icon.svg') : asset('images/hearth-icon-black.svg') ) ?>
+                <?php $typeOfTitleLike = ($product->iLiked == true ? ucfirst(translate('liked')) : ucfirst(translate('not liked'))) ?>
+
+                <?php $typeOfIconFavorite  = ($product->myFavorite == true ? file_get_contents(asset('images/favorite-yellow.svg')) : file_get_contents(asset('images/favorite-black.svg')) ) ?>
+                <?php $typeOfTitleFavorite = ($product->myFavorite == true ? ucfirst(translate('my favorite')) : ucfirst(translate('not my favorite'))) ?>
+                <div class="d-flex">
+                    <img class="cursor-pointer opacity-hover small-icon likeBtn historyItem-<?= $product->id ?>" src="{{asset($typeOfIconLike)}} "data-historyId="<?= $product->id ?>" title="<?= $typeOfTitleLike ?>">
+                    <img class="cursor-pointer opacity-hover small-icon ms-3 favoriteBtn productItem-<?= $product->id ?>" src="{{$typeOfIconFavorite}} "data-historyId="<?= $product->id ?>" title="<?= $typeOfTitleFavorite ?>">
+                </div>
             </div>
             <div class="ps-3 pe-3 mb-4 col-sm-10 col-md-8 m-auto">
                 <img class="img-fluid rounded" src="{{$product->getPhotoAsBase64()}}">
@@ -203,9 +222,67 @@
             success: function(result){
                 if(result.success == true){
                     $('#shipment-value').find('.value-here').text(result.content.value);
-                    $('#shipment-delivery-time').find('.value-here').text(result.content.deliverTime);
+                    $('#shipment-delivery-time').find('.value-here').text(result.content.deliverTime + ' ' + "{{ucfirst(translate('days'))}}");
                 }else{
                     alert(result.message);
+                }
+            },
+            complete: function(){
+                openLoader(true);
+            }
+        });
+    });
+
+    $('.likeBtn').on('click', function(){
+        if("{{Auth::user()}}" == ''){
+            return;
+        }
+        openLoader();
+        var productId = $(this).attr('data-historyId');
+        $.ajax({
+            url: "{{ \App\Helpers\Functions::viewLink('dashboard/product/handlelikes') }}",
+            method: 'Post',
+            data: {'productId': productId},
+            dataType: 'JSON',
+            success: function(result){
+                var tag = $('.historyItem-'+productId);
+                if(result.success == true){
+                    if(result.added == true){
+                        tag.attr('src', "{{asset('images/hearth-icon.svg')}}");
+                        tag.attr('title', "<?= ucfirst(translate('liked')) ?>");
+                    }else{
+                        tag.attr('src', "{{asset('images/hearth-icon-black.svg')}}");
+                        tag.attr('title', "<?= ucfirst(translate('not liked')) ?>");
+                    }
+                }
+            },
+            complete: function(){
+                openLoader(true);
+            }
+        });
+    });
+    
+    $('.favoriteBtn').on('click', function(){
+        if("{{Auth::user()}}" == ''){
+            return;
+        }
+        openLoader();
+        var productId = $(this).attr('data-historyId');
+        $.ajax({
+            url: "{{ \App\Helpers\Functions::viewLink('dashboard/product/favoriteproduct') }}",
+            method: 'Post',
+            data: {'productId': productId},
+            dataType: 'JSON',
+            success: function(result){
+                var tag = $('.productItem-'+productId);
+                if(result.success == true){
+                    if(result.added == true){
+                        tag.attr('src', "{{file_get_contents(asset('images/favorite-yellow.svg'))}}");
+                        tag.attr('title', "<?= ucfirst(translate('my favorite')) ?>");
+                    }else{
+                        tag.attr('src', "{{file_get_contents(asset('images/favorite-black.svg'))}}");
+                        tag.attr('title', "<?= ucfirst(translate('not my favorite')) ?>");
+                    }
                 }
             },
             complete: function(){

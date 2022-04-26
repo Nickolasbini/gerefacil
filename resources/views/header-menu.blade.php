@@ -1,3 +1,14 @@
+<?php $chosenLanguage = (session()->get('userLanguage') ? session()->get('userLanguage') : env('USER_LANGUAGE')) ?>
+<select id="language-selector" class="fixed-top rounded mt-1 me-5 ms-auto">
+    <?php $languages = ['en', 'pt'] ?>
+    @foreach($languages as $language)
+        <?php $selectedAttribute = ($language == $chosenLanguage ? 'selected=""' : '') ?>
+        <option value="{{$language}}" {{$selectedAttribute}} class="banner-icon">{{strtoupper($language)}}</option>
+    @endforeach
+</select>
+{{ Form::open(['route' => 'change.language', 'method' => 'post'])}}
+    {{ Form::hidden('seletedLanguage',  $chosenLanguage, ['id' => 'myLanguage'])}}
+{{ Form::close() }}
 <nav class="navbar navbar-expand-lg navbar-light bg-light pt-5 pb-4 ps-3 pe-3">
     <a class="navbar-brand" href="{{\App\Helpers\Functions::viewLink('/')}}">GereFacil</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -15,8 +26,8 @@
       </ul>
       @if(isset($enableSearch))
         <div id="menu-header-searcher" action="{{$enableSearch}}" class="row col-md-6">
-            <input id="menu-header-input" class="rounded  col-md-8 shadow" type="search" placeholder="Search" aria-label="Search">
-            <a class="btn btn-primary col-md-2" onclick="searchProducts()" style="margin-left: -5px;">Search</a>
+            <input id="menu-header-input" class="rounded  col-md-8 shadow" type="search" placeholder="{{ ucfirst(translate('search')) }}" aria-label="Search">
+            <a class="btn btn-primary col-md-2" onclick="searchProducts()" style="margin-left: -5px;">{{ ucfirst(translate('search')) }}</a>
         </div>
       @endif
       <div class="col-md-2">
@@ -63,5 +74,10 @@
             $('#navbarSupportedContent').show();
             $('#menu-header-searcher').find('a').css('margin-left', 'unset');
         }
+    });
+
+    $('#language-selector').on('change', function(){
+        $('#myLanguage').val($(this).val())
+        $('#myLanguage').parent().submit();
     });
 </script>

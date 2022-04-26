@@ -6,28 +6,12 @@ use App\Helpers\Functions;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
-use Illuminate\Support\Facades\Auth;
 
 class IndexController extends Controller 
 {
     // homepage related data to be sent to view
     public function homePage($page = 1)
     {
-        // $frete = new \App\Models\Shipment(
-        //      83702185, 
-        //      83820429, 
-        //      5, 
-        //      10, 
-        //      10, 
-        //      10, 
-        //      55
-        // );
-        
-        // echo $frete->getValor();//Obtem o valor do frete
-        // echo '<br>';
-        // echo $frete->getPrazoEntrega();//Obtem o prazo de entrega em dias
-	    // die;
-
         $productName = $this->getParameter('search');
         $limit       = $this->getParameter('limit', 10);
         $filter      = $this->getParameter('filter');
@@ -66,24 +50,26 @@ class IndexController extends Controller
             'cheaper'   => ucfirst(translate('cheaper')),
             'expensive' => ucfirst(translate('expensive'))
         ];
-        if(Auth::user()){
-            foreach($products as $product){
-                $productLikeObj = \App\Models\ProductLikes::where('product_id', $product->id)->where('user_id', Auth::user()->id)->get();
-                if(count($productLikeObj) > 0){
-                    $product->iLiked = true;
-                }else{
-                    $product->iLiked = false;
-                }
-            }
-        }
         return view('home')->with([
             'products'   => $products,
             'categories' => $categories,
             'search'     => $productName,
             'page'       => $page,
             'filter'     => $filter,
-            'filteringOptions' => $filteringOptions
+            'filteringOptions' => $filteringOptions,
+            'selectedCategory' => ($filter == 'category' ? $productName : null)
         ]);
     }
 
+    // changes the system language session variable
+    public function changeLanguage()
+    {
+        $seletedLanguage = $this->getParameter('seletedLanguage', env('USER_LANGUAGE'));
+        $avaliableLanguages = ['en', 'pt', 'es'];
+        if(!in_array($seletedLanguage, $avaliableLanguages)){
+            return redirect('/');
+        }
+        session()->put('userLanguage', $seletedLanguage);
+        return redirect('/');
+    }
 }

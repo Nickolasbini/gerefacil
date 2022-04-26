@@ -32,6 +32,9 @@
                         <x-jet-nav-link href="/" :active="request()->routeIs('dashboard/home')">
                             <?= ucfirst(translate('home')) ?>
                         </x-jet-nav-link>
+                        <x-jet-nav-link href="{{ route('favorite.list') }}" :active="request()->routeIs('favorite.list')">
+                            <?= ucfirst(translate('favorite')) ?>
+                        </x-jet-nav-link>
                     @endif
                 </div>
             </div>
@@ -125,6 +128,9 @@
             @else
                 <x-jet-nav-link href="/" :active="request()->routeIs('dashboard/home')">
                     <?= ucfirst(translate('go back')) ?>
+                </x-jet-nav-link>
+                <x-jet-nav-link href="{{ route('favorite.list') }}" :active="request()->routeIs('favorite.list')">
+                    <?= ucfirst(translate('favorite')) ?>
                 </x-jet-nav-link>
             @endif
         </div>

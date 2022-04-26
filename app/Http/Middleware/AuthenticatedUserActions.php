@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\Functions;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Expr\FuncCall;
 
 class AuthenticatedUserActions extends \App\Http\Controllers\Controller
@@ -17,6 +19,11 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
      */
     public function handle(Request $request, Closure $next)
     {
+        if(!$request->user()->isVerified){
+            Functions::translateAndSetToSession('user not verified, please check your email');
+            return redirect('/');
+        }
+
         $this->insertAuthenticatedUserDataToSession($request->user());
 
         if($this->separateUsers($request)){
@@ -40,7 +47,9 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
             }
             $this->session->put('authUser-' . $keyName, $data);
         }
-        $this->session->put('userLanguage', env('USER_LANGUAGE'));
+        if(!$this->session->get('userLanguage')){
+            $this->session->put('userLanguage', env('USER_LANGUAGE'));
+        }
     }
 
     /**
@@ -51,7 +60,11 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
     {
         $exceptionsForNonAdmins = [
             '/user/profile',
-            'logout'
+            'logout',
+            '/dashboard/product/handlelikes',
+            '/dashboard/product/favoriteproduct',
+            '/dashboard/favorite/list',
+            '/dashboard/favorite/remove'
         ];
         $requestURI = $request->getRequestUri();
         if($this->isAdmin()){

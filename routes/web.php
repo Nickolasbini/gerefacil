@@ -30,6 +30,7 @@ Route::middleware(['master'])->group(function(){
     // public routes
     Route::get('product/detail/{productId?}', 'ProductController@productDetail')->name('product.detail');
     Route::post('calculateshipment', 'ProductController@calculateShipment')->name('calculate.shipment');
+    Route::post('changelanguage', 'IndexController@changeLanguage')->name('change.language');
 
     // clean session viewMessage
     Route::post('cleansessionmessage', 'UserController@cleanViewMessage')->name('cleansessionmessage');
@@ -68,13 +69,18 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
     Route::post('product/remove', 'ProductController@remove')->name('product.remove');
 
     Route::post('product/handlelikes', 'ProductController@handleLike')->name('product.handlelikes');
+    Route::post('product/favoriteproduct', 'ProductController@favoritePorduct')->name('product.favoriteproduct');
 
-    // products routes
+    // sale routes
     Route::get('sale/save', [SaleController::class, 'save']);
 
-    // products routes
+    // message routes
     Route::get('message/save', [MessageController::class, 'save']);
 
-    // products routes
+    // report routes
     Route::get('report/save', [ReportController::class, 'save']);
+
+    // favorite routes
+    Route::get('favorite/list', 'FavoriteController@list')->name('favorite.list');
+    Route::post('favorite/remove', 'FavoriteController@remove')->name('favorite.remove');
 });
