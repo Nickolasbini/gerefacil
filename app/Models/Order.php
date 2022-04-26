@@ -15,8 +15,12 @@ class Order extends Model {
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'orderPrice',
+        'isPayed',
+        'dateOfPayment',
+        'user_id',
+        'numberOfUnits',
+        'shippingPrice',
+        'receiverAddress'
     ];
 }

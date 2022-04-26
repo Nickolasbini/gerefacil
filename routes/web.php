@@ -23,6 +23,11 @@ use App\Http\Controllers\CategoryController;
 Route::middleware(['master'])->group(function(){ 
     Route::get('/', 'IndexController@homePage')->name('/');
 
+    Route::post('productorder/additem', 'ProductOrderController@addItem')->name('productorder.additem');
+    Route::post('productorder/listcart', 'ProductOrderController@listCart')->name('productorder.listcart');
+    Route::post('productorder/updateitemquantity', 'ProductOrderController@updateItemQuantity')->name('productorder.updateitemquantity');
+    Route::post('productorder/removeproductorder', 'ProductOrderController@removeProductOrder')->name('productorder.removeproductorder');
+
     Route::post('user/validatecpf', 'UserController@validateCPF')->name('validate.cpf');
     Route::post('user/getcepdata', 'UserController@getCEPData')->name('get.cep.data');
     Route::post('user/checkserial', 'UserController@checkSerial')->name('check.serial');
@@ -83,4 +88,7 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
     // favorite routes
     Route::get('favorite/list', 'FavoriteController@list')->name('favorite.list');
     Route::post('favorite/remove', 'FavoriteController@remove')->name('favorite.remove');
+
+    // order routes
+    Route::post('order/additem', 'OrderController@addItem')->name('order.additem');
 });
