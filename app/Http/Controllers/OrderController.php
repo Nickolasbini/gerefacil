@@ -84,7 +84,8 @@ class OrderController extends Controller
         ];
         return json_encode([
             'success' => true,
-            'message' => 'response'
+            'message' => 'response',
+            'content' => $cepData
         ]);
     }
 }

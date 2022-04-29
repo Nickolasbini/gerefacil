@@ -98,3 +98,5 @@ Route::middleware(['master', 'authenticatedUserActions'])->group(function () {
     // product order routes
     Route::get('cart', 'ProductOrderController@myCart')->name('cart');
 });
+
+Route::post('calculateordershipment', 'OrderController@calculateOrderShipmentPriceAndDelivery')->name('calculateordershipment');
