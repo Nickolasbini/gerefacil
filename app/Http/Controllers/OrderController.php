@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\ProductOrder;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -52,6 +53,39 @@ class OrderController extends Controller
     public function remove()
     {
         
+    }
+
+    public function calculateOrderShipmentPriceAndDelivery()
+    {
+        $orderId      = $this->getParameter('orderId');
+        $shipmentType = $this->getParameter('shipmentType');
+        $orderObj = Order::find($orderId);
+        if(!$orderObj)
+            return null;
+        $data      = $orderObj->getSumOfShipmentSpecificationsOnOrderProducts();
+        $sellerCEP = $orderObj->getSellerCEP();
+        $cepData = [
+            'value'       => null,
+            'deliverTime' => null
+        ];
+        $shipment = new \App\Models\Shipment(
+            Auth::user()->id, 
+            $sellerCEP, 
+            $data['weight'],
+            $data['length'], 
+            $data['width'], 
+            $data['height'], 
+            $orderObj->getSubTotal(),
+            $shipmentType
+        );
+        $cepData = [
+            'value'       => Functions::formatMoney($shipment->getValor()),
+            'deliverTime' => $shipment->getPrazoEntrega()
+        ];
+        return json_encode([
+            'success' => true,
+            'message' => 'response'
+        ]);
     }
 }
 

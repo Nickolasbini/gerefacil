@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Functions;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductOrder;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ProductOrderController extends Controller
 {
@@ -169,6 +171,23 @@ class ProductOrderController extends Controller
             'success' => true,
             'content' => $response,
             'total'   => count($response)
+        ]);
+    }
+
+    // renders cart view and passes required data
+    public function myCart()
+    {
+        $userObj = Auth::user();
+        $orderObj = new Order();
+        if(!$orderObj->haveAnyNonPayedOrder($userObj->id)){
+            Functions::translateAndSetToSession('no open order', 'failure');
+            return redirect()->back();
+        }
+        $myOrderObj    = $orderObj->getOpenOrder($userObj->id);
+        $productOrders = $myOrderObj->getProductOrders();
+        return view('authenticated/my_cart')->with([
+            'order'        => $myOrderObj,
+            'productOrder' => $productOrders
         ]);
     }
 }

@@ -23,10 +23,10 @@ class Product extends Model {
         'user_id',
         'document',
         'likes',
-        'weight',
-        'length',
-        'width',
-        'height'
+        'weightInKM',
+        'lengthInCentimeter',
+        'widthInCentimeter',
+        'heightInCentimeter'
     ];
 
     // setters

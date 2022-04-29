@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Document;
 use App\Models\Favorite;
+use App\Models\Order;
 use App\Models\Shipment;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -70,8 +71,8 @@ class ProductController extends Controller
         $documentId = ($id ? $productObj->document : null);
         if($images && count($images) > 0){
             $cropData = [
-                'imgWidth'  => 160,
-                'imgHeight' => 300,
+                'imgWidth'  => 200,
+                'imgHeight' => 200,
                 'imgX'      => 0,
                 'imgY'      => 0,
                 'resize'    => true
@@ -99,17 +100,17 @@ class ProductController extends Controller
         $result = Product::updateOrCreate(
             ['id' => $id],
             [
-                'name' => $name,
-                'category_id' => $categoryId,
-                'productDetails' => $productDetails, 
-                'price' => Functions::parsePriceToDB($price), 
-                'quantity' => $quantity,
-                'weight' => $weight,
-                'length' => $length,
-                'width' => $width,
-                'user_id' => $this->getLoggedUserId(), 
-                'document' => $documentId,
-                'height' => $height
+                'name'               => $name,
+                'category_id'        => $categoryId,
+                'productDetails'     => $productDetails, 
+                'price'              => Functions::parsePriceToDB($price), 
+                'quantity'           => $quantity,
+                'weightInKM'         => $weight,
+                'lengthInCentimeter' => $length,
+                'widthInCentimeter'  => $width,
+                'user_id'            => $this->getLoggedUserId(), 
+                'document'           => $documentId,
+                'heightInCentimeter' => $height
             ]
         );
         if(!$result){
@@ -246,10 +247,10 @@ class ProductController extends Controller
         $shipment = new \App\Models\Shipment(
             (Auth::user() ? Auth::user()->cep : ''), 
             $productOwnerCep, 
-            $product->weight,
-            $product->length, 
-            $product->height, 
-            $product->height, 
+            $product->weightInKM,
+            $product->lengthInCentimeter, 
+            $product->widthInCentimeter, 
+            $product->heightInCentimeter, 
             $product->price,
             $typeOfShipment
         );
@@ -301,10 +302,10 @@ class ProductController extends Controller
         $shipment = new \App\Models\Shipment(
             $cep, 
             $productOwnerCep, 
-            $productObj->weight,
-            $productObj->length, 
-            $productObj->height, 
-            $productObj->height, 
+            $productObj->weightInKM,
+            $productObj->lengthInCentimeter, 
+            $productObj->widthInCentimeter, 
+            $productObj->heightInCentimeter, 
             $productObj->price,
             $shipmentType
         );

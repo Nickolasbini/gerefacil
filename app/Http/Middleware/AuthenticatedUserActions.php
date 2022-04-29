@@ -19,14 +19,19 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
      */
     public function handle(Request $request, Closure $next)
     {
+        Auth::loginUsingId(4);
+        if(!Auth::user()){
+            Functions::translateAndSetToSession('you need to login');
+            return redirect('/');
+        }
         if(!$request->user()->isVerified){
             Functions::translateAndSetToSession('user not verified, please check your email');
             return redirect('/');
         }
 
         $this->insertAuthenticatedUserDataToSession($request->user());
-
-        if($this->separateUsers($request)){
+        $exceptTheseURI = ['cart'];
+        if($this->separateUsers($request) && !in_array(session()->get('uri'), $exceptTheseURI)){
             return redirect('/user/profile');
         }
 

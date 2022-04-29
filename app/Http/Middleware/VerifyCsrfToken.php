@@ -15,6 +15,7 @@ class VerifyCsrfToken extends Middleware
         '/productorder/additem',
         '/productorder/listcart',
         '/productorder/updateitemquantity',
-        '/productorder/removeproductorder'
+        '/productorder/removeproductorder',
+        '/calculateshipment'
     ];
 }

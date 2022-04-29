@@ -92,3 +92,9 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
     // order routes
     Route::post('order/additem', 'OrderController@addItem')->name('order.additem');
 });
+
+// authenticated routes without prefix 
+Route::middleware(['master', 'authenticatedUserActions'])->group(function () {
+    // product order routes
+    Route::get('cart', 'ProductOrderController@myCart')->name('cart');
+});

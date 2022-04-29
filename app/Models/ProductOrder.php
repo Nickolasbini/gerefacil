@@ -50,4 +50,16 @@ class ProductOrder extends Model {
             return $totalSum;
         return null;
     }
+
+    public function getProductsByOrderId($orderId = null)
+    {
+        return $this->where('order_id', $orderId)->get();
+    }
+
+    // adds product to $this object
+    public function addProductObject()
+    {
+        $this->product = Product::find($this->product_id);
+        return $this->product;
+    }
 }

@@ -92,7 +92,7 @@
                             <div class="col-6">
                                 <label class="mt-2 h5"><?= ucfirst(translate('height')) ?></label>
                                 @if($product)
-                                    <input name="height" id="height" type="text" class="form-control rounded just-numbers" value="{{$product->height}}" placeholder="{{ucfirst(translate('minimun is 10 cm'))}}">
+                                    <input name="height" id="height" type="text" class="form-control rounded just-numbers" value="{{$product->heightInCentimeter}}" placeholder="{{ucfirst(translate('minimun is 10 cm'))}}">
                                 @else
                                     <input name="height" id="height" type="text" class="form-control rounded just-numbers" placeholder="{{ucfirst(translate('minimun is 10 cm'))}}">
                                 @endif

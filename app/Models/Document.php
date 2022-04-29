@@ -153,7 +153,7 @@ class Document extends Model
         if(!array_key_exists('resize', $cropData)){
             $image->freecrop($cropData['imgWidth'], $cropData['imgHeight'], $cropData['imgX'], $cropData['imgY']);
         }else{
-            $image->resize(300, 500, $allow_enlarge = True);
+            $image->resize($cropData['imgWidth'], $cropData['imgHeight'], true);
         }
         $image->save($path . '/' . $name);
         $documentObj = Document::create([
