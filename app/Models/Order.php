@@ -61,7 +61,7 @@ class Order extends Model {
     }
 
     // totalizes values used on shipment, such as: 'weight', 'length', 'width' and 'height'
-    public function getSumOfShipmentSpecificationsOnOrderProducts()
+    public function getSumOfShipmentSpecificationsOnOrderProducts($productOrderId = null)
     {
         $data = [
             'weight' => 0.0,
@@ -69,7 +69,11 @@ class Order extends Model {
             'width'  => 0,
             'height' => 0
         ];
-        $products = $this->getProductOrders();
+        if($productOrderId){
+            $products = ProductOrder::where('id', $productOrderId)->get();
+        }else{
+            $products = $this->getProductOrders();
+        }
         if($products->count() < 1)
             return $data;
         $totalWeight = 0;
@@ -82,7 +86,7 @@ class Order extends Model {
             $totalCubicCentimeters += $width; 
         }
         $cubeRoot = round(pow($totalCubicCentimeters, 1/3), 2);
-        $resposta = [
+        $mathResult = [
             'totalWeight' => $totalWeight,
             'cubeRoot'    => $cubeRoot
         ];
