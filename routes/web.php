@@ -100,3 +100,5 @@ Route::middleware(['master', 'authenticatedUserActions'])->group(function () {
 });
 
 Route::post('calculateordershipment', 'OrderController@calculateOrderShipmentPriceAndDelivery')->name('calculateordershipment');
+Route::post('handleproductorderquantity', 'ProductOrderController@handleProductOrderQuantity')->name('handleproductorderquantity');
+Route::post('orderdetail', 'OrderController@orderDetail')->name('orderdetail');

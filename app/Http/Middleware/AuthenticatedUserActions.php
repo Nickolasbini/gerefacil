@@ -19,7 +19,7 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
      */
     public function handle(Request $request, Closure $next)
     {
-        Auth::loginUsingId(4);
+        //Auth::loginUsingId(4);
         if(!Auth::user()){
             Functions::translateAndSetToSession('you need to login');
             return redirect('/');

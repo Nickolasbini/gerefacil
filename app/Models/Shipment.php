@@ -18,15 +18,17 @@ class Shipment {
     ];
 
 	public function __construct(
-		$CEPorigem,
-		$CEPdestino,
-		$peso,
-		$comprimento,
-		$altura,
-		$largura,
-		$valor,
+		$CEPorigem = null,
+		$CEPdestino = null,
+		$peso = null,
+		$comprimento = null,
+		$altura = null,
+		$largura = null,
+		$valor = null,
         $service = 40010
 	){
+		if(!$CEPorigem)
+			return;
 		$service = ($service ? $service : 40010);
 		if(!in_array($service, $this->typesOfShipment)){
 			throw new Exception("Invalid type of shipment", 400);
@@ -95,4 +97,27 @@ class Shipment {
 		return $this->typesOfShipment;
 	}
 
+	// checks if max limit was reached
+	public static function isBiggerThanShipmentMaxSizeLimit($data)
+	{
+		$rules = [
+			'maxSizeInCentimenters' => '200'
+		];
+		$sizeSumInCentimeters = (int)$data['length'] + (int)$data['width'] + (int)$data['height'];
+		if($sizeSumInCentimeters > $rules['maxSizeInCentimenters']){
+			return true;
+		}
+		return false;
+	}
+
+	public static function isSmallerThanShipmentMinSizeLimit($data, $position)
+	{
+		$rules = [
+			'minSizeInCentimenters' => '26'
+		];
+		$sizeSumInCentimeters = $data[$position]['length'] + $data[$position]['width'] + $data[$position]['height'];
+		if($sizeSumInCentimeters < $rules['minSizeInCentimenters'])
+			return true;
+		return false;
+	}
 }

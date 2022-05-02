@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Order extends Model {
 
@@ -71,14 +72,33 @@ class Order extends Model {
         $products = $this->getProductOrders();
         if($products->count() < 1)
             return $data;
-        foreach($products as $productOrder){
+        $totalWeight = 0;
+        $totalCubicCentimeters = 0;
+        foreach ($products as $productOrder) {
             $aProduct = Product::find($productOrder->product_id);
-            $data['weight'] = $data['weight'] + ($aProduct->weightInKM * $productOrder->quantity);
-            $data['length'] = $data['length'] + ($aProduct->lengthInCentimeter * $productOrder->quantity);
-            $data['width']  = $data['width']  + ($aProduct->widthInCentimeter  * $productOrder->quantity);
-            $data['height'] = $data['height']  + ($aProduct->heightInCentimeter * $productOrder->quantity);
+            $weight = $aProduct->weightInKM * $productOrder->quantity;
+            $width  = ($aProduct->heightInCentimeter * $aProduct->lengthInCentimeter * $aProduct->widthInCentimeter) * $productOrder->quantity;
+            $totalWeight           += $weight;
+            $totalCubicCentimeters += $width; 
         }
-        return $data;
+        $cubeRoot = round(pow($totalCubicCentimeters, 1/3), 2);
+        $resposta = [
+            'totalWeight' => $totalWeight,
+            'cubeRoot'    => $cubeRoot
+        ];
+        $length   = $cubeRoot < 16 ? 16 : $cubeRoot;
+        $height   = $cubeRoot < 2 ? 2 : $cubeRoot;
+        $width    = $cubeRoot < 11 ? 11 : $cubeRoot;
+        $weight   = $totalWeight < 0.3 ? 0.3 : $totalWeight;
+        $diameter = hypot($length, $width); // just do it if the thing is in a rectangle shape
+        $result = [
+            'weight' => $weight,
+            'length' => $length,
+            'height' => $height,
+            'width'  => $width,
+            //'nVlDiametro' => $diameter
+        ];
+        return $result;
     }
 
     public function getSellerCEP()
@@ -91,5 +111,23 @@ class Order extends Model {
             return null;
         $productOwnerUser = User::find($productObj->user_id);
         return $productOwnerUser->cep;
+    }
+
+    public function hasAnyProductOrder($userId = null)
+    {
+        $order = Order::where('user_id', $userId)->get();
+        if($order->count() < 1)
+            return false;
+        if(ProductOrder::where('order_id', $order[0]->id)->count() > 0)
+            return true;
+        return false;
+    }
+
+    public function getIdOfActiveOrder()
+    {
+        if(!Auth::user())
+            return null;
+        $result = $this->where('user_id', Auth::user()->id)->get();
+        return ($result->count() > 0 ? $result[0]->id : null);
     }
 }

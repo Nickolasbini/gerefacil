@@ -59,34 +59,52 @@ class OrderController extends Controller
     {
         $orderId      = $this->getParameter('orderId');
         $shipmentType = $this->getParameter('shipmentType');
+        $deliveryCEP  = $this->getParameter('deliveryCEP', Auth::user()->cep);
         $orderObj = Order::find($orderId);
         if(!$orderObj)
             return null;
-        $data      = $orderObj->getSumOfShipmentSpecificationsOnOrderProducts();
-        $sellerCEP = $orderObj->getSellerCEP();
-        $cepData = [
-            'value'       => null,
-            'deliverTime' => null
-        ];
+        $aShipmentData = $orderObj->getSumOfShipmentSpecificationsOnOrderProducts();
+        $sellerCEP    = $orderObj->getSellerCEP();
         $shipment = new \App\Models\Shipment(
-            Auth::user()->id, 
+            $deliveryCEP, 
             $sellerCEP, 
-            $data['weight'],
-            $data['length'], 
-            $data['width'], 
-            $data['height'], 
+            $aShipmentData['weight'],
+            $aShipmentData['length'], 
+            $aShipmentData['width'], 
+            $aShipmentData['height'], 
             $orderObj->getSubTotal(),
             $shipmentType
         );
-        $cepData = [
-            'value'       => Functions::formatMoney($shipment->getValor()),
-            'deliverTime' => $shipment->getPrazoEntrega()
+        $shipmentData = [
+            'value'        => Functions::formatMoney($shipment->getValor()),
+            'deliveryTime' => $shipment->getPrazoEntrega()
         ];
         return json_encode([
             'success' => true,
             'message' => 'response',
-            'content' => $cepData
+            'content' => $shipmentData,
+            'total'   => Functions::formatMoney($orderObj->getSubTotal() + $shipment->getValor())
         ]);
+    }
+
+    // fetches detail of an order such as its total and partial values 
+    public function orderDetail()
+    {
+        $orderId = $this->getParameter('orderId');
+        if(!$orderId){
+            return json_encode([
+                'success' => false,
+                'message' => ucfirst(translate('required data missing'))
+            ]);
+        }
+        $orderObj = Order::find($orderId);
+        if(!$orderObj){
+            return json_encode([
+                'success' => false,
+                'message' => ucfirst(translate('order is invalid'))
+            ]);
+        }
+        dd($orderObj->getSubTotal());
     }
 }
 

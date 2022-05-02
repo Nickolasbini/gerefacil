@@ -6,7 +6,7 @@
         <div class="row text-center justify-content-center mt-5 mb-5 pb-5 border-b">
             @foreach($categories as $id => $category)
                 <?php $categoryChosen = ($id == $selectedCategory ? 'btn-dark' : 'btn-secondary') ?>
-                <div class="col-sm-10 col-md-3 m-2 btn {{$categoryChosen}} row text-center justify-content-center category-button" data-categoryId="{{$id}}">
+                <div class="col-sm-10 col-md-1 m-2 btn {{$categoryChosen}} row text-center justify-content-center category-button" data-categoryId="{{$id}}">
                     {{ucfirst($category)}}
                 </div>    
             @endforeach

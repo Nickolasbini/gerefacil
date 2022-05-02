@@ -42,6 +42,31 @@
           </div>
         </div>
     </div>
+
+    <div id="left-side-bar" class="position-absolute w-25 left-side-bar border-r shadow" style="display:none;">
+        <div class="container p2 mt-5">
+            <p class="h4 border-b pb-3">
+                {{ucfirst(translate('categories'))}}
+            </p>
+            <div class="wrapper-of-categories d-flex flex-column justify-content-center">
+                @foreach($categories as $categoryId => $categoryName)
+                    <div class="col-md-1 m-2 btn" data-categoryId="{{$categoryId}}">
+                        {{ucfirst($categoryName)}}
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    <div id="right-side-bar" class="position-absolute w-25 right-side-bar border-l shadow" style="display:none;">
+        <div class="container p2">
+            <p class="h4">
+                {{ucfirst(translate('cart'))}}
+            </p>
+        </div>
+    </div>
+
+    @include('dashboard/loader_of_page')
 </html>
 <script src="{{ asset('externalfeatures/jquery.js') }}"></script>
 <script src="{{ asset('externalfeatures/bootstrap.js') }}"></script>
@@ -109,5 +134,38 @@
             cleanViewMessage();
         }
     }
+
+    /* Side bars */
+    function openLeftSideBar(close = false){
+        if(close == false){
+            $('#left-side-bar').show();
+        }else{
+            $('#left-side-bar').hide();
+        }
+    }
+
+    function openRightSideBar(close = false){
+        if(close == false){
+            $('#right-side-bar').show();
+        }else{
+            $('#right-side-bar').hide();
+        }
+    }
 </script>
 
+<style>
+    .left-side-bar{
+        top: 0;
+        bottom: 0;
+        left: 0;
+        background: gray;
+        z-index: 100000;
+    }
+    .right-side-bar{
+        top: 0;
+        bottom: 0;
+        right: 0;
+        background: gray;
+        z-index: 100000;
+    }
+</style>

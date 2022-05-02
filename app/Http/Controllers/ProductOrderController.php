@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductOrder;
+use App\Models\Shipment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,7 +21,7 @@ class ProductOrderController extends Controller
         $productId = $this->getParameter('productId');
         $quantity  = $this->getParameter('quantity');
 
-        if(!$productId || !$quantity){
+        if(!$productId){
             return json_encode([
                 'success' => false,
                 'message' => 'missing parameters'
@@ -57,7 +58,7 @@ class ProductOrderController extends Controller
         }
         return json_encode([
             'success' => true,
-            'message' => ($quantity > 1 ? ucfirst(translate('items added')) : ucfirst(translate('item added')))
+            'message' => ($productOrder->quantity > 1 ? ucfirst(translate('items added')) : ucfirst(translate('item added')))
         ]);
     }
 
@@ -116,6 +117,7 @@ class ProductOrderController extends Controller
                 'message' => 'invalid product order'
             ]);
         }
+        $orderObj = Order::find($productOrderObj->order_id);
         $quantity = $productOrderObj->quantity;
         $response = $productOrderObj->delete();
         if(!$response){
@@ -125,8 +127,10 @@ class ProductOrderController extends Controller
             ]);
         }
         return json_encode([
-            'success'  => true,
-            'message'  => ($quantity > 1 ? ucfirst(translate('items removed')) : ucfirst(translate('item removed')))
+            'success'     => true,
+            'message'     => ($quantity > 1 ? ucfirst(translate('items removed')) : ucfirst(translate('item removed'))),
+            'totalSum'    => Functions::formatMoney($orderObj->getSubTotal()),
+            'hasProducts' => $orderObj->hasAnyProductOrder(Auth::user()->id)
         ]);
     }
 
@@ -181,13 +185,64 @@ class ProductOrderController extends Controller
         $orderObj = new Order();
         if(!$orderObj->haveAnyNonPayedOrder($userObj->id)){
             Functions::translateAndSetToSession('no open order', 'failure');
-            return redirect()->back();
+            return redirect('/');
+        }
+        if(!$orderObj->hasAnyProductOrder($userObj->id)){
+            Functions::translateAndSetToSession('no products added to order', 'failure');
+            return redirect('/');
         }
         $myOrderObj    = $orderObj->getOpenOrder($userObj->id);
         $productOrders = $myOrderObj->getProductOrders();
+        $shipmentObj   = new Shipment();
         return view('authenticated/my_cart')->with([
-            'order'        => $myOrderObj,
-            'productOrder' => $productOrders
+            'order'         => $myOrderObj,
+            'productOrder'  => $productOrders,
+            'shipmentTypes' => $shipmentObj->getShipmentTypes()
+        ]);
+    }
+
+    public function handleProductOrderQuantity()
+    {
+        $productOrderId = $this->getParameter('productOrderId');
+        $operation      = $this->getParameter('operation');
+        if(!$productOrderId || !$operation){
+            return json_encode([
+                'success' => false,
+                'message' => ucfirst(translate('some required data ara missing'))
+            ]);
+        }
+        $avaliableOperations = ['+', '-'];
+        if(!in_array($operation, $avaliableOperations)){
+            return json_encode([
+                'success' => false,
+                'message' => ucfirst(translate('unknown operation type'))
+            ]);
+        }
+        $productOrderObj = ProductOrder::find($productOrderId);
+        if(!$productOrderObj){
+            return json_encode([
+                'success' => false,
+                'message' => ucfirst(translate('product order id is invalid'))
+            ]);
+        }
+        $orderObj = Order::where('id', $productOrderObj->order_id)->get()[0];
+        $result = '';
+        if($operation == '+'){
+            $productOrderObj->increaseQuantityOfProduct();
+        }else{
+            $result = $productOrderObj->decreaseQuantityOfProduct();
+        }
+        $returnResponse = [
+            'productPrice' => Functions::formatMoney($productOrderObj->getProduct()->price),
+            'quantity'     => $productOrderObj->quantity,
+            'totalSum'     => Functions::formatMoney($productOrderObj->totalSum),
+            'subTotal'     => Functions::formatMoney($orderObj->getSubTotal())
+        ];
+        return json_encode([
+            'success'    => true,
+            'message'    => ($operation == '+' ? ucfirst(translate('product order updated')) : ucfirst(translate('product order removed')) ),
+            'wasRemoved' => ($result == 'removed' ? true : false),
+            'data'       => $returnResponse
         ]);
     }
 }

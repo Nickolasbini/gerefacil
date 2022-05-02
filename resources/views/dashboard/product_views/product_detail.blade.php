@@ -177,7 +177,7 @@
             </div>
             <div class="row col-sm-10 col-md-8 m-auto">
                 <a id="calculate-shipment" class="btn btn-secondary opacity-hover mt-3 mb-3"><?= ucfirst(translate('calculate shipment')) ?></a>
-                <a class="btn btn-primary opacity-hover mt-3 mb-3" href="{{\App\Helpers\Functions::viewLink('product/detail/'.$product->id)}}"><?= ucfirst(translate('add to cart')) ?></a>
+                <a class="btn btn-primary opacity-hover mt-3 mb-3" id="add-to-cart"><?= ucfirst(translate('add to cart')) ?></a>
             </div>
         </div>        
     </section>
@@ -284,6 +284,24 @@
                         tag.attr('title', "<?= ucfirst(translate('not my favorite')) ?>");
                     }
                 }
+            },
+            complete: function(){
+                openLoader(true);
+            }
+        });
+    });
+
+    var orderId   = "{{$orderId}}"
+    var productId = "{{$product->id}}"
+    $('#add-to-cart').on('click', function(){
+        openLoader();
+        $.ajax({
+            url: "{{ \App\Helpers\Functions::viewLink('productorder/additem') }}",
+            method: 'Post',
+            data: {orderId: orderId, productId: productId},
+            dataType: 'JSON',
+            success: function(result){
+
             },
             complete: function(){
                 openLoader(true);

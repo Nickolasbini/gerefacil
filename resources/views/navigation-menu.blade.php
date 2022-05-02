@@ -216,7 +216,7 @@
     });
     // fetches profile photo
     $.ajax({
-        url: "<?= env('APP_URL') ?>" + "/dashboard/getprofilephoto",
+        url: "{{ \App\Helpers\Functions::viewLink('dashboard/getprofilephoto') }}",
         method: 'GET',
         success: function(result){
             if(result != ''){

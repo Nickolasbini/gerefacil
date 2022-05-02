@@ -28,19 +28,60 @@ class ProductOrder extends Model {
     {
         if(!$product || !$order || !$request)
             return null;
-        $totalSum = $product->price * $request->quantity;
+        $object = $this->getProductOrderByProductId($product->id);
+        if($object->count() > 0){
+            $productOrderObj = $object[0];
+            $quantity = $productOrderObj->quantity + 1;
+            $productOrderObj->updateQuantity($quantity);
+            return true;
+        }
+        $quantity = $request->quantity;
+        $quantity = ($quantity ? $quantity : 1);
+        $totalSum = $product->price * $quantity;
         $productOrderObj = $this::create([
-            'product_id' => $product->id, 'user_id' => $order->user_id, 'quantity' => $request->quantity, 'totalSum' => $totalSum, 'order_id' => $order->id
+            'product_id' => $product->id, 'user_id' => $order->user_id, 'quantity' => $quantity, 'totalSum' => $totalSum, 'order_id' => $order->id
         ]);
         if($productOrderObj instanceof $this)
             return true;
         return null;
     }
 
+    // updates the quantity of a productOrder
     public function updateQuantity($quantity = null)
     {
-        if(!$quantity)
-            return null;
+        $quantity = (!$quantity ? $this->quantity + 1 : $quantity);
+        $productObj = Product::find($this->product_id);
+        $totalSum = $productObj->price * $quantity;
+        $this->totalSum = $totalSum;
+        $this->quantity = $quantity;
+        $result = $this->save();
+        if($result)
+            return $totalSum;
+        return null;
+    }
+
+    public function decreaseQuantityOfProduct()
+    {
+        $quantity = $this->quantity;
+        $quantity = $quantity - 1;
+        if($quantity == 0){
+            $this->delete();
+            return 'removed';
+        }
+        $productObj = Product::find($this->product_id);
+        $totalSum = $productObj->price * $quantity;
+        $this->totalSum = $totalSum;
+        $this->quantity = $quantity;
+        $result = $this->save();
+        if($result)
+            return $totalSum;
+        return null;
+    }
+
+    public function increaseQuantityOfProduct()
+    {
+        $quantity = $this->quantity;
+        $quantity = $quantity + 1;
         $productObj = Product::find($this->product_id);
         $totalSum = $productObj->price * $quantity;
         $this->totalSum = $totalSum;
@@ -61,5 +102,21 @@ class ProductOrder extends Model {
     {
         $this->product = Product::find($this->product_id);
         return $this->product;
+    }
+
+    public function getProductFromProductOrder()
+    {
+        $productId = $this->product_id;
+        return Product::find($productId);
+    }
+
+    public function getProduct()
+    {
+        return Product::find($this->product_id);
+    }
+
+    public function getProductOrderByProductId($productId = null)
+    {
+        return ProductOrder::where('product_id', $productId)->get();
     }
 }
