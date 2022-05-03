@@ -131,6 +131,8 @@ class ProductOrderController extends Controller
                 'message' => ucfirst(translate('an error occured, try again please'))
             ]);
         }
+        if($orderObj->getOrderProductsCount() < 1)
+            $orderObj->delete();
         return json_encode([
             'success'     => true,
             'message'     => ($quantity > 1 ? ucfirst(translate('items removed')) : ucfirst(translate('item removed'))),
@@ -192,11 +194,15 @@ class ProductOrderController extends Controller
             Functions::translateAndSetToSession('no open order', 'failure');
             return redirect('/');
         }
-        if(!$orderObj->hasAnyProductOrder($userObj->id)){
+        if(!$orderObj->getOrderProductsCount()){
             Functions::translateAndSetToSession('no products added to order', 'failure');
             return redirect('/');
         }
         $myOrderObj    = $orderObj->getOpenOrder($userObj->id);
+        if(is_null($myOrderObj)){
+            Functions::translateAndSetToSession('no active order found', 'failure');
+            return redirect('/');
+        }
         $productOrders = $myOrderObj->getProductOrders();
         $shipmentObj   = new Shipment();
         return view('authenticated/my_cart')->with([

@@ -302,6 +302,9 @@
             success: function(result){
                 addMessageToToast(result.message);
                 openModal(true, 'product-detail-modal');
+                if(result.success == true){
+                    getNumberOfProductsOnCurrentCart();
+                }
             },
             complete: function(){
                 openLoader(true);

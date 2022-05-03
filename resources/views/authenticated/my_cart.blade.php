@@ -8,6 +8,9 @@
         </p>
     </div>
     <section id="cart-list" class="row" data-orderId="{{ $order->id }}">
+        <div class="text-right mb-5">
+            <a id="abandom-order" class="btn btn-outline-secondary" title="{{ucfirst(translate('abandom cart'))}}">X</a>
+        </div>
         <div class="col-md-7">
             @foreach($productOrder as $orderedProduct)
                 <div class="row border-t pt-3 mb-4 aProduct">
@@ -284,5 +287,25 @@
         shipmentType     = (shipmentType == undefined ? '' : shipmentType);
         var newHref      = href + '&shipmentType=' + shipmentType;
         $(this).attr('href', newHref);
+    });
+
+    $('#abandom-order').on('click', function(){
+        openLoader();
+        $.ajax({
+            url: "{{ \App\Helpers\Functions::viewLink('dashboard/order/abandomorder') }}",
+            method: 'POST',
+            data: {orderId: "{{$order->id}}"},
+            dataType: 'JSON',
+            success: function(result){
+                if(result.success == true){
+                    window.location.href = "{{\App\Helpers\Functions::viewLink('/')}}";
+                }else{
+                    addMessageToToast(result.message);
+                }
+            },
+            complete: function(){
+                openLoader(true);
+            }
+        });
     });
 </script>

@@ -46,14 +46,39 @@ class OrderController extends Controller
     }
 
     /**
-     * Remove 
+     * abandoms an order canceling it and leaving a history 
      * @param  id   to remove
      * 
      * @return
     */
-    public function remove()
+    public function abandomOrder()
     {
-        
+        $orderId = $this->getParameter('orderId');
+        if(!$orderId){
+            return json_encode([
+                'success' => false,
+                'message' => ucfirst(translate('required data missing'))
+            ]);
+        }
+        $orderObj = Order::find($orderId);
+        if(!$orderObj){
+            return json_encode([
+                'success' => false,
+                'message' => ucfirst(translate('order is invalid'))
+            ]);
+        }
+        $orderObj->status = 5;
+        $result = $orderObj->save();
+        if(!$result){
+            return json_encode([
+                'success' => false,
+                'message' => ucfirst(translate('an error occured, try again please'))
+            ]);
+        }
+        return json_encode([
+            'success' => true,
+            'message' => ucfirst(translate('order was abandoned'))
+        ]);
     }
 
     public function calculateOrderShipmentPriceAndDelivery()
@@ -133,7 +158,7 @@ class OrderController extends Controller
         $orderObj->totalPrice      = $orderObj->shippingPrice + $orderObj->orderPrice;
         $orderObj->isPayed         = true;
         $orderObj->receiverAddress = Auth::user()->address;
-        $orderObj->status          = 1;
+        $orderObj->status          = 2;
         $result = $orderObj->save();
         if(!$result){
             Functions::translateAndSetToSession('an error occurred, try agai please', 'failure');
@@ -154,6 +179,24 @@ class OrderController extends Controller
             'orders'         => $orders,
             'status'         => $orderObj->getAllStatusTranslated(),
             'selectedStatus' => $selectedStatus
+        ]);
+    }
+
+    // get number of products in the current active order
+    public function getNumberOfProductsOnOrder()
+    {
+        $orderObj = new Order();
+        $order = $orderObj->getOpenOrder($this->getLoggedUserId());
+        if(is_null($order)){
+            return json_encode([
+                'success' => false,
+                'number'  => 0
+            ]);
+        }
+        $total = $order->getOrderProductsCount();
+        return json_encode([
+            'success' => true,
+            'number'  => $total
         ]);
     }
 }

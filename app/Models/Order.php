@@ -31,7 +31,8 @@ class Order extends Model {
         1 => 'order created',
         2 => 'awaiting payment confirmation',
         3 => 'sent to delivery',
-        4 => 'received by customer'
+        4 => 'received by customer',
+        5 => 'abandoned by user'
     ];
 
     // return <bool> true or false in case there is a order of mine (not payed)
@@ -50,13 +51,21 @@ class Order extends Model {
 
     public function getOpenOrder($userId = null)
     {
-        return Order::where('user_id', $userId)->where('isPayed', false)->get()[0];
+        $orderObj = Order::where('user_id', $userId)->where('isPayed', false)->where('status', '!=', '5')->get();
+        if($orderObj->count() > 0)
+            return $orderObj[0];
+        return null;
     }
 
     public function getProductOrders()
     {
         $productOrder = new ProductOrder();
         return $productOrder->getProductsByOrderId($this->id);
+    }
+
+    public function getOrderProductsCount()
+    {
+        return ProductOrder::where('order_id', $this->id)->count();
     }
 
     public function getSubTotal()
@@ -115,7 +124,7 @@ class Order extends Model {
     {
         if(!Auth::user())
             return null;
-        $result = $this->where('user_id', Auth::user()->id)->where('isPayed', false)->get();
+        $result = $this->where('user_id', Auth::user()->id)->where('isPayed', false)->where('status', '!=', '5')->get();
         return ($result->count() > 0 ? $result[0]->id : null);
     }
 
@@ -139,8 +148,8 @@ class Order extends Model {
     public function getAllMyOrders($userId, $status = null)
     {
         if($status)
-            return Order::where('user_id', $userId)->where('status', '=', $status)->orderBy('status')->get(); 
-        return Order::where('user_id', $userId)->orderBy('status')->get();
+            return Order::where('user_id', $userId)->where('status', '=', $status)->orderBy('status')->paginate(); 
+        return Order::where('user_id', $userId)->orderBy('status')->paginate(10);
     }
 
     public function insertProductOrderInventoryToOrderObj($ordersArray)
@@ -206,7 +215,8 @@ class Order extends Model {
             1 => 'info',
             2 => 'warning',
             3 => 'info',
-            4 => 'success'
+            4 => 'success',
+            5 => 'danger'
         ];
         if(!array_key_exists($status, $correspondentColor))
             return null;

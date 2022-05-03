@@ -29,11 +29,8 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
         }
 
         $this->insertAuthenticatedUserDataToSession($request->user());
-        $exceptTheseURI = ['cart', 'order/pay', 'dashboard/order/mycart'];
-        if($this->separateUsers($request) && !in_array(session()->get('uri'), $exceptTheseURI)){
+        if($this->separateUsers($request))
             return redirect('/user/profile');
-        }
-
         return $next($request);
     }
 
@@ -64,11 +61,16 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
     {
         $exceptionsForNonAdmins = [
             '/user/profile',
-            'logout',
+            '/logout',
             '/dashboard/product/handlelikes',
             '/dashboard/product/favoriteproduct',
             '/dashboard/favorite/list',
-            '/dashboard/favorite/remove'
+            '/dashboard/favorite/remove',
+            '/cart',
+            '/order/pay',
+            '/dashboard/order/mycart',
+            '/dashboard/order/abandomorder',
+            '/dashboard/order/getnumberofproducts'
         ];
         $requestURI = $request->getRequestUri();
         if($this->isAdmin()){

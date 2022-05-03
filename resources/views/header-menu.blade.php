@@ -26,7 +26,7 @@
                 <a class="nav-link" href="#"><?= ucfirst(translate('categories')) ?></a>
             </li>
             <li class="nav-item">
-                <div id="cart_flag"></div>
+                <div id="cart_flag" style="display:none;"></div>
                 <a class="nav-link" href="{{\App\Helpers\Functions::viewLink('cart')}}"><?= ucfirst(translate('cart')) ?></a>
             </li>
           </ul>
@@ -63,6 +63,10 @@
     </div>
 </nav>
 <script>
+    $(document).ready(function(){
+        getNumberOfProductsOnCurrentCart();
+    });
+
     function searchProducts(){
         var href  = $('#menu-header-searcher').attr('action');
         var value = $('#menu-header-input').val();
@@ -86,13 +90,32 @@
         $('#myLanguage').val($(this).val())
         $('#myLanguage').parent().submit();
     });
+
+    function getNumberOfProductsOnCurrentCart(){
+        if("{{Auth::user()}}" == ''){
+            return;
+        }
+        $.ajax({
+            url: "{{ \App\Helpers\Functions::viewLink('dashboard/order/getnumberofproducts') }}",
+            type: 'POST',
+            dataType: 'JSON',
+            success: function(result){
+                if(result.number > 0){
+                    $('#cart_flag').text(result.number);
+                    $('#cart_flag').show();
+                }else{
+                    $('#cart_flag').hide();
+                }
+            }
+        });
+    }
 </script>
 
 <style>
     #cart_flag{
         width: 10px;
         height: 10px;
-        background-color: red;
+        /*background-color: red;*/
         border-radius: 100%;
         position: absolute;
         margin-top: 5px;

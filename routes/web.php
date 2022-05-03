@@ -95,8 +95,10 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
     Route::post('favorite/remove', 'FavoriteController@remove')->name('favorite.remove');
 
     // order routes
+    Route::post('order/abandomorder', 'OrderController@abandomOrder')->name('order.abandom');
     Route::post('order/additem', 'OrderController@addItem')->name('order.additem');
     Route::get('order/mycart', 'OrderController@listAdmCartList')->name('order.mycart');
+    Route::post('order/getnumberofproducts', 'OrderController@getNumberOfProductsOnOrder')->name('order.getnumberofproducts');
 });
 
 // authenticated routes without prefix 

@@ -91,6 +91,6 @@ class UserController extends Controller
     // cleans session ViewMessage
     public function cleanViewMessage()
     {
-        return session()->put('viewMessage', null);
+        return session()->forget('viewMessage');
     }
 }

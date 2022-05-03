@@ -64,6 +64,9 @@
                     </div>
                 </div>
             @endforeach
+            <div id="pagination" class="w-100 text-center">
+                {{$orders->links()}}
+            </div>
         @else
             <p class="mt- mb-t">
                 {{ucfirst(translate('no order'))}}
