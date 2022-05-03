@@ -81,7 +81,8 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
     Route::post('product/favoriteproduct', 'ProductController@favoritePorduct')->name('product.favoriteproduct');
 
     // sale routes
-    Route::get('sale/save', [SaleController::class, 'save']);
+    Route::get('sale/save', 'SaleController@save')->name('sale.save');
+    Route::get('sale/list', 'SaleController@list')->name('sale.list');
 
     // message routes
     Route::get('message/save', [MessageController::class, 'save']);
@@ -95,6 +96,7 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
 
     // order routes
     Route::post('order/additem', 'OrderController@addItem')->name('order.additem');
+    Route::get('order/mycart', 'OrderController@listAdmCartList')->name('order.mycart');
 });
 
 // authenticated routes without prefix 
@@ -104,3 +106,5 @@ Route::middleware(['master', 'authenticatedUserActions'])->group(function () {
 
     Route::get('order/pay', 'OrderController@pay')->name('order.pay');
 });
+
+Route::post('sale/list', 'SaleController@list')->name('sale.list2');

@@ -1,4 +1,3 @@
-
 @include('dashboard/master')
 <x-app-layout>
     <x-slot name="header">

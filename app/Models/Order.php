@@ -22,11 +22,13 @@ class Order extends Model {
         'user_id',
         'numberOfUnits',
         'shippingPrice',
-        'receiverAddress'
+        'receiverAddress',
+        'totalPrice',
+        'status'
     ];
 
     const STATUS_ARRAY = [
-        0 => 'order',
+        0 => 'order created',
         1 => 'awaiting payment confirmation',
         2 => 'sent to delivery'
     ];
@@ -131,5 +133,48 @@ class Order extends Model {
             $shipmentType
         );
         return $shipment->getValor();
+    }
+
+    public function getAllMyOrders($userId)
+    {
+        return Order::where('user_id', $userId)->orderBy('status')->get();
+    }
+
+    public function insertProductOrderInventoryToOrderObj($ordersArray)
+    {
+        foreach($ordersArray as $order){
+            $details = $order->getDetailsOfProducts();
+            $order->productDetails = $details;
+        }
+    }
+
+
+    public function getDetailsOfProducts()
+    {
+        $products = $this->getProductOrders();
+        $response = [];
+        foreach($products as $productOrder){
+            $productId    = null;
+            $productImg   = null;
+            $productName  = null;
+            $productPrice = null;
+            $productObj  = Product::find($productOrder->product_id);
+            if($productObj){
+                $productId    = $productObj->id;
+                $productImg   = $productObj->getPhotoAsBase64();
+                $productName  = $productObj->name;
+                $productPrice = $productObj->price;
+            }
+            $response[] = [
+                'id'           => $productOrder->id,
+                'productId'    => $productId,
+                'productPhoto' => $productImg,
+                'productName'  => $productName,
+                'unitaryPrice' => $productPrice,
+                'parcialSum'   => $productOrder->totalSum,
+                'quantity'     => $productOrder->quantity
+            ];
+        }
+        return $response;
     }
 }

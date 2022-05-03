@@ -130,6 +130,7 @@ class OrderController extends Controller
         $orderObj->dateOfPayment   = Carbon::now();
         $orderObj->shippingPrice   = $orderObj->getOrderShipmentPrice($shipmentType, $user);
         $orderObj->orderPrice      = $orderObj->getSubTotal();
+        $orderObj->totalPrice      = $orderObj->shippingPrice + $orderObj->orderPrice;
         $orderObj->isPayed         = true;
         $orderObj->receiverAddress = Auth::user()->address;
         $orderObj->status          = 1;
@@ -140,6 +141,17 @@ class OrderController extends Controller
         }
         Functions::translateAndSetToSession('payment sent, please await for the product(s) to be sent', 'success');
         return redirect('dashboard/sale');
+    }
+
+    // the view with Orders
+    public function listAdmCartList()
+    {
+        $orderObj = new Order();
+        $orders = $orderObj->getAllMyOrders($this->getLoggedUserId());
+        $orderObj->insertProductOrderInventoryToOrderObj($orders);
+        return view('dashboard/cart_views/cart_home')->with([
+            'orders' => $orders
+        ]);
     }
 }
 

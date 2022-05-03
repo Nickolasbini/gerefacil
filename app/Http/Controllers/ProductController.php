@@ -248,25 +248,7 @@ class ProductController extends Controller
             'value'       => null,
             'deliverTime' => null
         ];
-        if(Auth::user() && Auth::user()->cep){
-            $shipment = new \App\Models\Shipment(
-                Auth::user()->cep, 
-                $productOwnerCep, 
-                $product->weightInKM,
-                $product->lengthInCentimeter, 
-                $product->widthInCentimeter, 
-                $product->heightInCentimeter, 
-                $product->price,
-                $typeOfShipment
-            );
-            $cepData = [
-                'value'       => $shipment->getValor(),
-                'deliverTime' => $shipment->getPrazoEntrega()
-            ];
-        }else{
-            $shipment = new Shipment();
-        }
-        
+        $shipment = new Shipment();
         return view('dashboard/product_views/product_detail')->with([
             'product'         => $product,
             'admin'           => (Auth::user() && Auth::user()->administrator ? true : false),

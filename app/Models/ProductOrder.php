@@ -28,7 +28,7 @@ class ProductOrder extends Model {
     {
         if(!$product || !$order || !$request)
             return null;
-        $object = $this->getProductOrderByProductId($product->id);
+        $object = $this->getProductOrderByProductId($product->id, $order->id);
         if($object->count() > 0){
             $productOrderObj = $object[0];
             $quantity = $productOrderObj->quantity + 1;
@@ -115,8 +115,8 @@ class ProductOrder extends Model {
         return Product::find($this->product_id);
     }
 
-    public function getProductOrderByProductId($productId = null)
+    public function getProductOrderByProductId($productId = null, $orderId = null)
     {
-        return ProductOrder::where('product_id', $productId)->get();
+        return ProductOrder::where('product_id', $productId)->where('order_id', $orderId)->get();
     }
 }
