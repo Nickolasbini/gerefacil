@@ -108,5 +108,3 @@ Route::middleware(['master', 'authenticatedUserActions'])->group(function () {
 
     Route::get('order/pay', 'OrderController@pay')->name('order.pay');
 });
-
-Route::post('sale/list', 'SaleController@list')->name('sale.list2');

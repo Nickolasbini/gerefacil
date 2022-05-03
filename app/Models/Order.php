@@ -222,4 +222,20 @@ class Order extends Model {
             return null;
         return $correspondentColor[$status];
     }
+
+    public function getAllCustomersOrders($parameters = [])
+    {
+        if(count($parameters) == 0)
+            return Order::where('id', '>', '0')->get();
+        $criteria = (array_key_exists('criteria', $parameters) ? $parameters['criteria'] : null);
+        $values   = (array_key_exists('values', $parameters)   ? $parameters['values']   : null);
+        if(!$criteria || !$values)
+            return Order::where('id', '>', '0')->get();
+
+        if(is_array($datePeriod))
+            return Order::where('id', '>', '0')->where('status', '=', $status)->get();
+        if($status)
+            return Order::where('id', '>', '0')->where('status', '=', $status)->get();
+        return Order::where('id', '>', '0')->get();
+    }
 }

@@ -19,7 +19,7 @@
                         <x-jet-nav-link href="{{ route('dashboard.product') }}" :active="request()->routeIs('dashboard.product')">
                             <?= ucfirst(translate('product')) ?>
                         </x-jet-nav-link>
-                        <x-jet-nav-link href="{{ route('dashboard.sale') }}" :active="request()->routeIs('dashboard.sale')">
+                        <x-jet-nav-link href="{{ route('sale.list') }}" :active="request()->routeIs('sale.list')">
                             <?= ucfirst(translate('sale')) ?>
                         </x-jet-nav-link>
                         <x-jet-nav-link href="{{ route('dashboard.message') }}" :active="request()->routeIs('dashboard.message')">
@@ -119,7 +119,7 @@
                 <x-jet-nav-link href="{{ route('dashboard.product') }}" :active="request()->routeIs('dashboard.product')">
                     <?= ucfirst(translate('product')) ?>
                 </x-jet-nav-link>
-                <x-jet-nav-link href="{{ route('dashboard.sale') }}" :active="request()->routeIs('dashboard.sale')">
+                <x-jet-nav-link href="{{ route('sale.list') }}" :active="request()->routeIs('sale.list')">
                     <?= ucfirst(translate('sale')) ?>
                 </x-jet-nav-link>
                 <x-jet-nav-link href="{{ route('dashboard.message') }}" :active="request()->routeIs('dashboard.message')">
