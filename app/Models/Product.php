@@ -81,7 +81,7 @@ class Product extends Model {
     }
 
     // calculates the specifications of a product
-    public function calculateSpecificationsCubicSizeOfProductOrder(ProductOrder $productsArray)
+    public function calculateSpecificationsCubicSizeOfProductOrder($productsArray)
     {
         $totalWeight = 0;
         $totalCubicCentimeters = 0;
@@ -113,7 +113,7 @@ class Product extends Model {
     }
 
     // calculates the specifications of a product
-    public function calculateSpecificationsCubicSizeOfProduct(Product $productsArray, $quantity = 1)
+    public function calculateSpecificationsCubicSizeOfProduct($productsArray, $quantity = 1)
     {
         $productsArray = (is_array($productsArray) ? $productsArray : [$productsArray]);
         $totalWeight = 0;

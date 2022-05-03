@@ -4,12 +4,12 @@
     @include('header-menu', ['enableSearch' => \App\Helpers\Functions::viewLink('/')])
 @endif
 
-<div id="master-modal" class="modal" tabindex="-1" role="dialog">
+<div id="product-detail-modal" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title h4">Título</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="openModal(true, 'master-modal')">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="openModal(true, 'product-detail-modal')">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -65,12 +65,12 @@
                 </div>
                 <div class=" d-flex flex-column row">
                     <a class="btn btn-primary col-sm-10 col-md-6 m-auto mt-3 mb-3 add-to-cart"><?= ucfirst(translate('add to cart')) ?></a>
-                    <a class="btn btn-secondary col-sm-10 col-md-6 m-auto mt-3 mb-3" onclick="openModal(true, 'master-modal')"><?= ucfirst(translate('decline purchase')) ?></a>
+                    <a class="btn btn-secondary col-sm-10 col-md-6 m-auto mt-3 mb-3" onclick="openModal(true, 'product-detail-modal')"><?= ucfirst(translate('decline purchase')) ?></a>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary negative-btn" data-dismiss="modal" onclick="openModal(true, 'master-modal')">Fechar</button>
+            <button type="button" class="btn btn-secondary negative-btn" data-dismiss="modal" onclick="openModal(true, 'product-detail-modal')">Fechar</button>
             <button type="button" class="btn btn-primary positive-btn">Confirmar</button>
         </div>
       </div>
@@ -206,9 +206,9 @@
     }
 
     $('#calculate-shipment').on('click', function(){
-        hideModalFooter();
+        hideModalFooter('product-detail-modal');
         addTitle("{{ucfirst(translate('shipment'))}}");
-        openModal();
+        openModal(false, 'product-detail-modal');
     });
 
     $('#searchForShipment').on('click', function(){
@@ -223,7 +223,7 @@
                     $('#shipment-value').find('.value-here').text(result.content.value);
                     $('#shipment-delivery-time').find('.value-here').text(result.content.deliverTime + ' ' + "{{ucfirst(translate('days'))}}");
                 }else{
-                    alert(result.message);
+                    addMessageToToast(result.message);
                 }
             },
             complete: function(){
@@ -301,7 +301,7 @@
             dataType: 'JSON',
             success: function(result){
                 addMessageToToast(result.message);
-                openModal(true);
+                openModal(true, 'product-detail-modal');
             },
             complete: function(){
                 openLoader(true);

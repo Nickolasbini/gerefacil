@@ -25,6 +25,12 @@ class Order extends Model {
         'receiverAddress'
     ];
 
+    const STATUS_ARRAY = [
+        0 => 'order',
+        1 => 'awaiting payment confirmation',
+        2 => 'sent to delivery'
+    ];
+
     // return <bool> true or false in case there is a order of mine (not payed)
     public function haveAnyNonPayedOrder($userId = null)
     {
@@ -77,7 +83,7 @@ class Order extends Model {
         if($products->count() < 1)
             return $data;
         $productObj = new Product();
-        return $productObj->calculateSpecificationsCubicSize($products);
+        return $productObj->calculateSpecificationsCubicSizeOfProductOrder($products);
     }
 
     public function getSellerCEP()
@@ -94,7 +100,7 @@ class Order extends Model {
 
     public function hasAnyProductOrder($userId = null)
     {
-        $order = Order::where('user_id', $userId)->get();
+        $order = Order::where('user_id', $userId)->where('isPayed', false)->get();
         if($order->count() < 1)
             return false;
         if(ProductOrder::where('order_id', $order[0]->id)->count() > 0)
@@ -102,11 +108,28 @@ class Order extends Model {
         return false;
     }
 
-    public function getIdOfActiveOrder()
+    public function getIdOfOpenActiveOrder()
     {
         if(!Auth::user())
             return null;
-        $result = $this->where('user_id', Auth::user()->id)->get();
+        $result = $this->where('user_id', Auth::user()->id)->where('isPayed', false)->get();
         return ($result->count() > 0 ? $result[0]->id : null);
+    }
+
+    public function getOrderShipmentPrice($shipmentType, $user)
+    {
+        $aShipmentData = $this->getSumOfShipmentSpecificationsOnOrderProducts();
+        $sellerCEP     = $this->getSellerCEP();
+        $shipment = new \App\Models\Shipment(
+            $user->cep, 
+            $sellerCEP, 
+            $aShipmentData['weight'],
+            $aShipmentData['length'], 
+            $aShipmentData['width'], 
+            $aShipmentData['height'], 
+            $this->getSubTotal(),
+            $shipmentType
+        );
+        return $shipment->getValor();
     }
 }

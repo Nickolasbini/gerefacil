@@ -101,4 +101,6 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
 Route::middleware(['master', 'authenticatedUserActions'])->group(function () {
     // product order routes
     Route::get('cart', 'ProductOrderController@myCart')->name('cart');
+
+    Route::get('order/pay', 'OrderController@pay')->name('order.pay');
 });

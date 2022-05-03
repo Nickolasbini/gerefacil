@@ -52,7 +52,7 @@ class ProductOrderController extends Controller
             $orderObj = $order;
         }else{
             $orderObj = Order::create([
-                'user_id' => $this->getLoggedUserId(), 'isPayed' => false, 'dateOfPayment' => Carbon::now()
+                'user_id' => Auth::user()->id, 'isPayed' => false, 'dateOfPayment' => Carbon::now(), 'status' => 0
             ]);
         }
         $productOrder = new ProductOrder();

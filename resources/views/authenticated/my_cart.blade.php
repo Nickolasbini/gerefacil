@@ -109,6 +109,11 @@
                     </a>
                 </div>
             </div>
+            <div class="m-2 mt-5 row">
+                <a id="pay-order" class="p-2 btn btn-success" href="{{\App\Helpers\Functions::viewLink('order/pay/?orderId='.$order->id)}}">
+                    {{ucfirst(translate('pay'))}}
+                </a>
+            </div>
         </div>
     </section>
     <div class="">
@@ -271,5 +276,13 @@
                 openLoader(true);
             }
         });
+    });
+
+    $('#pay-order').on('click', function(){
+        var href         = $(this).attr('href');
+        var shipmentType = $('.selected-shipment-type').attr('data-optionnumber');
+        shipmentType     = (shipmentType == undefined ? '' : shipmentType);
+        var newHref      = href + '&shipmentType=' + shipmentType;
+        $(this).attr('href', newHref);
     });
 </script>

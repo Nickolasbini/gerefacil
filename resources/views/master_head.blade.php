@@ -16,7 +16,7 @@
         <div id="main-toast" class="toast mt-4 me-4" style="position:fixed; top:0; right:0; z-index:100000; background-color:rgb(255, 255, 255);">
           <div class="toast-header">
             <img src="{{asset('backgrounds/login.webp')}}" class="perfect-rounded mr-2 small-icon" alt="...">
-            <strong class="mr-auto"><span class="primary-color">GereFacil</span></strong>
+            <strong class="mr-auto"><span class="secondary-color">GereFacil</span></strong>
             <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close" onclick="closeToast()">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -85,22 +85,33 @@
         }
     });
     /* Modal methods */
-    function openModal(close = false){
+    function openModal(close = false, id = 'master-modal'){
         if(close == false){
-            $('#master-modal').modal('show');
+            $('#'+id).modal('show');
         }else{
-            $('#master-modal').modal('hide');
+            $('#'+id).modal('hide');
         }
     }
-    function addModalContent(title = '', message = '', showFooter = false){
-        $('#master-modal').find('.modal-title').text(title);
-        $('#master-modal').find('.modal-body').html(message);
+    function addTitle(title = '', id = 'master-modal'){
+        $('#'+id).find('.modal-title').text(title);
+    }
+    function addModalContent(title = '', message = '', showFooter = false, id = 'master-modal'){
+        $('#'+id).find('.modal-title').text(title);
+        $('#'+id).find('.modal-body').html(message);
         if(showFooter == false){
-            $('#master-modal').find('.modal-footer').hide();
+            $('#'+id).find('.modal-footer').hide();
         }else{
-            $('#master-modal').find('.modal-footer').find('.negative-btn').text(showFooter['negativeBtn']);
-            $('#master-modal').find('.modal-footer').find('.positive-btn').text(showFooter['positiveBtn']);
+            $('#'+id).find('.modal-footer').find('.negative-btn').text(showFooter['negativeBtn']);
+            $('#'+id).find('.modal-footer').find('.positive-btn').text(showFooter['positiveBtn']);
         }
+    }
+    function addModalFooterData(cancelMessage = 'Fechar', confirmMessage = 'Confirmar', id = 'master-modal'){
+        $('#'+id).find('.negative-btn').text(cancelMessage);
+        $('#'+id).find('.positive-btn').text(confirmMessage);
+    }
+
+    function hideModalFooter(id = 'master-modal'){
+        $('#'+id).find('.modal-footer').hide();
     }
 
     var messageToDispaly = "{{ session()->get('viewMessage') }}";

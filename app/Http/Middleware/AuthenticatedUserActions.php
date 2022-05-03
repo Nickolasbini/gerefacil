@@ -29,7 +29,7 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
         }
 
         $this->insertAuthenticatedUserDataToSession($request->user());
-        $exceptTheseURI = ['cart'];
+        $exceptTheseURI = ['cart', 'order/pay'];
         if($this->separateUsers($request) && !in_array(session()->get('uri'), $exceptTheseURI)){
             return redirect('/user/profile');
         }

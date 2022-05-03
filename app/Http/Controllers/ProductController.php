@@ -274,7 +274,7 @@ class ProductController extends Controller
             'cepData'         => $cepData,
             'shipmentTypes'   => $shipment->getShipmentTypes(),
             'selectedShipmentType' => $shipment->getShipmentTypes()['Sedex'],
-            'orderId'         => (Auth::user() ? ($orderObj = new Order())->getIdOfActiveOrder() : null) 
+            'orderId'         => (Auth::user() ? ($orderObj = new Order())->getIdOfOpenActiveOrder() : null) 
         ]);
     }
 

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\ProductOrder;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -105,6 +106,40 @@ class OrderController extends Controller
             ]);
         }
         dd($orderObj->getSubTotal());
+    }
+
+    public function pay()
+    {
+        $orderId      = $this->getParameter('orderId');
+        $shipmentType = $this->getParameter('shipmentType', 41106);
+        if(!$orderId || !$shipmentType){
+            Functions::translateAndSetToSession('required data missing', 'failure');
+            return redirect('/');
+        }
+        $orderObj = Order::find($orderId);
+        if(!$orderObj || $orderObj->user_id != $this->getLoggedUserId()){
+            Functions::translateAndSetToSession('order is invalid', 'failure');
+            return redirect('/');
+        }
+        $user = Auth::user();
+        if(!$user->address){
+            Functions::translateAndSetToSession('please enter your addess', 'failure');
+            return redirect('user/profile');
+        }
+        
+        $orderObj->dateOfPayment   = Carbon::now();
+        $orderObj->shippingPrice   = $orderObj->getOrderShipmentPrice($shipmentType, $user);
+        $orderObj->orderPrice      = $orderObj->getSubTotal();
+        $orderObj->isPayed         = true;
+        $orderObj->receiverAddress = Auth::user()->address;
+        $orderObj->status          = 1;
+        $result = $orderObj->save();
+        if(!$result){
+            Functions::translateAndSetToSession('an error occurred, try agai please', 'failure');
+            return redirect('cart');
+        }
+        Functions::translateAndSetToSession('payment sent, please await for the product(s) to be sent', 'success');
+        return redirect('dashboard/sale');
     }
 }
 
