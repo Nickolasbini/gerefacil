@@ -146,11 +146,14 @@ class OrderController extends Controller
     // the view with Orders
     public function listAdmCartList()
     {
+        $selectedStatus = $this->getParameter('status', '');
         $orderObj = new Order();
-        $orders = $orderObj->getAllMyOrders($this->getLoggedUserId());
+        $orders = $orderObj->getAllMyOrders($this->getLoggedUserId(), $selectedStatus);
         $orderObj->insertProductOrderInventoryToOrderObj($orders);
-        return view('dashboard/cart_views/cart_home')->with([
-            'orders' => $orders
+        return view('dashboard/order_views/order_home')->with([
+            'orders'         => $orders,
+            'status'         => $orderObj->getAllStatusTranslated(),
+            'selectedStatus' => $selectedStatus
         ]);
     }
 }

@@ -28,9 +28,10 @@ class Order extends Model {
     ];
 
     const STATUS_ARRAY = [
-        0 => 'order created',
-        1 => 'awaiting payment confirmation',
-        2 => 'sent to delivery'
+        1 => 'order created',
+        2 => 'awaiting payment confirmation',
+        3 => 'sent to delivery',
+        4 => 'received by customer'
     ];
 
     // return <bool> true or false in case there is a order of mine (not payed)
@@ -135,8 +136,10 @@ class Order extends Model {
         return $shipment->getValor();
     }
 
-    public function getAllMyOrders($userId)
+    public function getAllMyOrders($userId, $status = null)
     {
+        if($status)
+            return Order::where('user_id', $userId)->where('status', '=', $status)->orderBy('status')->get(); 
         return Order::where('user_id', $userId)->orderBy('status')->get();
     }
 
@@ -147,7 +150,6 @@ class Order extends Model {
             $order->productDetails = $details;
         }
     }
-
 
     public function getDetailsOfProducts()
     {
@@ -176,5 +178,38 @@ class Order extends Model {
             ];
         }
         return $response;
+    }
+
+    public function getAllStatusTranslated()
+    {
+        $response[''] = ucfirst(translate('all status'));
+        $allStatus = $this::STATUS_ARRAY;
+        foreach($allStatus as $statusNumber => $status){
+            $response[$statusNumber] = ucfirst(translate($status));
+        }
+        return $response;
+    }
+
+    public function getStatusTranslated()
+    {
+        $allStatus = $this::STATUS_ARRAY;
+        $status    = $this->status;
+        if(!array_key_exists($status, $allStatus))
+            return null;
+        return ucfirst(translate($allStatus[$status]));
+    }
+
+    public function getStatusCorrespondentColor()
+    {
+        $status = $this->status;
+        $correspondentColor = [
+            1 => 'info',
+            2 => 'warning',
+            3 => 'info',
+            4 => 'success'
+        ];
+        if(!array_key_exists($status, $correspondentColor))
+            return null;
+        return $correspondentColor[$status];
     }
 }

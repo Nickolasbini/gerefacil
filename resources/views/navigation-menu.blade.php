@@ -35,6 +35,9 @@
                         <x-jet-nav-link href="{{ route('favorite.list') }}" :active="request()->routeIs('favorite.list')">
                             <?= ucfirst(translate('favorite')) ?>
                         </x-jet-nav-link>
+                        <x-jet-nav-link href="{{ route('order.mycart') }}" :active="request()->routeIs('order.mycart')">
+                            <?= ucfirst(translate('order')) ?>
+                        </x-jet-nav-link>
                     @endif
                 </div>
             </div>
@@ -131,6 +134,9 @@
                 </x-jet-nav-link>
                 <x-jet-nav-link href="{{ route('favorite.list') }}" :active="request()->routeIs('favorite.list')">
                     <?= ucfirst(translate('favorite')) ?>
+                </x-jet-nav-link>
+                <x-jet-nav-link href="{{ route('order.mycart') }}" :active="request()->routeIs('order.mycart')">
+                    <?= ucfirst(translate('order')) ?>
                 </x-jet-nav-link>
             @endif
         </div>
