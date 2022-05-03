@@ -1201,6 +1201,7 @@ select {
 }
 .cursor-pointer{
   cursor: pointer;
+  text-decoration: none;
 }
 .translate-y-4 {
   --tw-translate-y: 1rem;
@@ -2239,4 +2240,10 @@ select {
     padding-left: 2rem;
     padding-right: 2rem;
   }
+}
+.primary-color{
+    color: #fff;
+}
+.secondary-color{
+    color: #6875F5;
 }

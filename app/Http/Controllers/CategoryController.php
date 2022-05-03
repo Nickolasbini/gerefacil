@@ -60,18 +60,18 @@ class CategoryController extends Controller
         $limit  = $this->getParameter('limit', 10);
         $filter = $this->getParameter('filter');
 
-        $this->session->put('authUser-id', 1);
-
-        $elements = [];
-        $total = Category::where('user_id', $this->getLoggedUserId())->orWhere('user_id', null)->count();
-        if($total < 0){
+        $categoryObj = new Category();
+        $categories = $categoryObj->getAndParse();
+        if(count($categories) < 0){
             return json_encode([
                 'success' => false,
-                'content' => $elements
+                'content' => $categories
             ]);
         }
-
-
+        return json_encode([
+            'success' => true,
+            'content' => $categories
+        ]);
     }
 
     /**

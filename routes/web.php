@@ -23,6 +23,8 @@ use App\Http\Controllers\CategoryController;
 Route::middleware(['master'])->group(function(){ 
     Route::get('/', 'IndexController@homePage')->name('/');
 
+    Route::post('category/list', 'CategoryController@list')->name('category.list');
+
     Route::post('productorder/additem', 'ProductOrderController@addItem')->name('productorder.additem');
     Route::post('productorder/listcart', 'ProductOrderController@listCart')->name('productorder.listcart');
     Route::post('productorder/updateitemquantity', 'ProductOrderController@updateItemQuantity')->name('productorder.updateitemquantity');
@@ -36,6 +38,8 @@ Route::middleware(['master'])->group(function(){
     Route::get('product/detail/{productId?}', 'ProductController@productDetail')->name('product.detail');
     Route::post('calculateshipment', 'ProductController@calculateShipment')->name('calculate.shipment');
     Route::post('changelanguage', 'IndexController@changeLanguage')->name('change.language');
+    Route::post('calculateordershipment', 'OrderController@calculateOrderShipmentPriceAndDelivery')->name('calculateordershipment');
+    Route::post('handleproductorderquantity', 'ProductOrderController@handleProductOrderQuantity')->name('handleproductorderquantity');
 
     // clean session viewMessage
     Route::post('cleansessionmessage', 'UserController@cleanViewMessage')->name('cleansessionmessage');
@@ -98,7 +102,3 @@ Route::middleware(['master', 'authenticatedUserActions'])->group(function () {
     // product order routes
     Route::get('cart', 'ProductOrderController@myCart')->name('cart');
 });
-
-Route::post('calculateordershipment', 'OrderController@calculateOrderShipmentPriceAndDelivery')->name('calculateordershipment');
-Route::post('handleproductorderquantity', 'ProductOrderController@handleProductOrderQuantity')->name('handleproductorderquantity');
-Route::post('orderdetail', 'OrderController@orderDetail')->name('orderdetail');

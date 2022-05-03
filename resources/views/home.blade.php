@@ -2,7 +2,7 @@
 @include('header-menu', ['enableSearch' => \App\Helpers\Functions::viewLink('/')])
 
 @if($categories)
-    <section id="categories-list" class="container-fluid p-1">
+    <section id="categories-list" class="container-fluid">
         <div class="row text-center justify-content-center mt-5 mb-5 pb-5 border-b">
             @foreach($categories as $id => $category)
                 <?php $categoryChosen = ($id == $selectedCategory ? 'btn-dark' : 'btn-secondary') ?>

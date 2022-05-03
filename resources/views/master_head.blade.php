@@ -45,25 +45,32 @@
 
     <div id="left-side-bar" class="position-absolute w-25 left-side-bar border-r shadow" style="display:none;">
         <div class="container p2 mt-5">
+            <div class="w-100 text-right">
+                <a class="opacity-hover cursor-pointer primary-color" onclick="openLeftSideBar(true)">X</a>
+            </div>
             <p class="h4 border-b pb-3">
                 {{ucfirst(translate('categories'))}}
             </p>
-            <div class="wrapper-of-categories d-flex flex-column justify-content-center">
-                @foreach($categories as $categoryId => $categoryName)
-                    <div class="col-md-1 m-2 btn" data-categoryId="{{$categoryId}}">
-                        {{ucfirst($categoryName)}}
-                    </div>
-                @endforeach
-            </div>
+            <div class="wrapper-of-categories d-flex flex-column justify-content-center"></div>
         </div>
+    </div>
+    <div id="oppener-of-left-side-bar" class="cursor-pointer" onclick="openLeftSideBar()">
+        <a class="opacity-hover cursor-pointer secondary-color">V</a>
     </div>
 
     <div id="right-side-bar" class="position-absolute w-25 right-side-bar border-l shadow" style="display:none;">
-        <div class="container p2">
-            <p class="h4">
+        <div class="container p2 mt-5">
+            <div class="w-100 text-right">
+                <a class="opacity-hover cursor-pointer primary-color" onclick="openRightSideBar(true)">X</a>
+            </div>
+            <p class="h4 border-l pb-3">
                 {{ucfirst(translate('cart'))}}
             </p>
+            <div class="wrapper-of-cart d-flex flex-column justify-content-center"></div>
         </div>
+    </div>
+    <div id="oppener-of-right-side-bar" class="cursor-pointer" onclick="openRightSideBar()">
+        <a class="opacity-hover cursor-pointer secondary-color">V</a>
     </div>
 
     @include('dashboard/loader_of_page')
@@ -110,6 +117,8 @@
         }
         $('#master-modal').modal();
         screenWidht = $(window).scrollTop();
+        fetchCategories();
+        fetchMyCart();
     });
 
     function cleanViewMessage(){
@@ -151,6 +160,53 @@
             $('#right-side-bar').hide();
         }
     }
+
+    // fetches all categories to put on left side menu
+    var basePath = "{{\App\Helpers\Functions::viewLink('/')}}";
+    function fetchCategories(){
+        $.ajax({
+            url: "{{ \App\Helpers\Functions::viewLink('category/list') }}",
+            type: 'POST',
+            dataType: 'JSON',
+            success: function(result){
+                if(result.success == true){
+                    var html = '';
+                    var data = result.content;
+                    for(var categoryId in data){
+                        html += '<div class="col-md-1 m-2 btn category-button-left-side-bar" data-categoryId="'+ categoryId +'">';
+                        html += '<a class="opacity-hover cursor-pointer primary-color" href="'+basePath+'/?search='+categoryId+'&filter=category">'+data[categoryId]+'</a>';
+                        html += '</div>';
+                    }
+                    $('.wrapper-of-categories').html(html);
+                }
+            }
+        });
+    }
+
+    function fetchMyCart(){
+        if("{{Session::get('authUser-id')}}" == ''){
+            $('#oppener-of-right-side-bar').remove();
+            return;
+        }
+        return;
+        $.ajax({
+            url: "{{ \App\Helpers\Functions::viewLink('productorder/listcart') }}",
+            type: 'POST',
+            dataType: 'JSON',
+            success: function(result){
+                if(result.success == true){
+                    var html = '';
+                    var data = result.content;
+                    for(i = 0; i < data.length; i++){
+                        html += '<div class="col-md-1 m-2 btn category-button-left-side-bar" data-categoryId="'+ categoryId +'">';
+                        html += '<a class="opacity-hover cursor-pointer primary-color" href="'+basePath+'/?search='+categoryId+'&filter=category">'+data[categoryId]+'</a>';
+                        html += '</div>';
+                    }
+                    $('.wrapper-of-categories').html(html);
+                }
+            }
+        });
+    }
 </script>
 
 <style>
@@ -161,11 +217,33 @@
         background: gray;
         z-index: 100000;
     }
+    .left-side-bar-oppener-button{
+        top:  0;
+        left: 0;
+    }
+    #oppener-of-left-side-bar{
+        position: fixed;
+        background: rgb(71, 123, 129);
+        padding: 2%;
+        left: 0;
+        top: 50%;
+    }
     .right-side-bar{
         top: 0;
         bottom: 0;
         right: 0;
         background: gray;
         z-index: 100000;
+    }
+    #oppener-of-right-side-bar{
+        position: fixed;
+        background: rgb(71, 123, 129);
+        padding: 2%;
+        right: 0;
+        top: 50%;
+    }
+    .small-icon{
+        width: 1.5em;
+        height: 1.5em;
     }
 </style>

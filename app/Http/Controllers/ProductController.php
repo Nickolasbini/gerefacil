@@ -309,13 +309,14 @@ class ProductController extends Controller
             'value'       => null,
             'deliverTime' => null
         ];
+        $specificationsData = $productObj->calculateSpecificationsCubicSizeOfProduct($productObj);
         $shipment = new \App\Models\Shipment(
             $cep, 
             $productOwnerCep, 
-            $productObj->weightInKM,
-            $productObj->lengthInCentimeter, 
-            $productObj->widthInCentimeter, 
-            $productObj->heightInCentimeter, 
+            $specificationsData['weight'],
+            $specificationsData['length'], 
+            $specificationsData['width'], 
+            $specificationsData['height'], 
             $productObj->price,
             $shipmentType
         );

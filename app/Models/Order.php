@@ -76,33 +76,8 @@ class Order extends Model {
         }
         if($products->count() < 1)
             return $data;
-        $totalWeight = 0;
-        $totalCubicCentimeters = 0;
-        foreach ($products as $productOrder) {
-            $aProduct = Product::find($productOrder->product_id);
-            $weight = $aProduct->weightInKM * $productOrder->quantity;
-            $width  = ($aProduct->heightInCentimeter * $aProduct->lengthInCentimeter * $aProduct->widthInCentimeter) * $productOrder->quantity;
-            $totalWeight           += $weight;
-            $totalCubicCentimeters += $width; 
-        }
-        $cubeRoot = round(pow($totalCubicCentimeters, 1/3), 2);
-        $mathResult = [
-            'totalWeight' => $totalWeight,
-            'cubeRoot'    => $cubeRoot
-        ];
-        $length   = $cubeRoot < 16 ? 16 : $cubeRoot;
-        $height   = $cubeRoot < 2 ? 2 : $cubeRoot;
-        $width    = $cubeRoot < 11 ? 11 : $cubeRoot;
-        $weight   = $totalWeight < 0.3 ? 0.3 : $totalWeight;
-        $diameter = hypot($length, $width); // just do it if the thing is in a rectangle shape
-        $result = [
-            'weight' => $weight,
-            'length' => $length,
-            'height' => $height,
-            'width'  => $width,
-            //'nVlDiametro' => $diameter
-        ];
-        return $result;
+        $productObj = new Product();
+        return $productObj->calculateSpecificationsCubicSize($products);
     }
 
     public function getSellerCEP()

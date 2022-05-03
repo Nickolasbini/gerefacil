@@ -1,8 +1,8 @@
 <?php
 namespace App\Helpers;
 
-use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 // can be called anywhere by \AppHelper
 class Functions
@@ -13,15 +13,17 @@ class Functions
     {
         if(!$cookieName || !$cookieData)
             return false;
-        $response = new Response('Set Cookie');
-        $response->withCookie(cookie($cookieName, $cookieData, $expirationTime));
-        return $response;
+        return Cookie::queue($cookieName, $cookieData, $expirationTime);
     }
 
     // gets a cookie
-    public static function getCookie($cookieName, Request $request){
-        $value = $request->cookie($cookieName);
-        return $value;
+    public static function getCookie($cookieName){
+        return Cookie::get($cookieName);
+    }
+
+    // gets a cookie
+    public static function deleteCookie($cookieName){
+        return Cookie::queue(Cookie::forget($cookieName));
     }
 
     // return url for view accordingly to enviroment at env

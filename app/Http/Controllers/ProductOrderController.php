@@ -21,6 +21,13 @@ class ProductOrderController extends Controller
         $productId = $this->getParameter('productId');
         $quantity  = $this->getParameter('quantity');
 
+        if(!Auth::user()){
+            return json_encode([
+                'success' => false,
+                'message' => ucfirst(translate('please log in first'))
+            ]);
+        }
+
         if(!$productId){
             return json_encode([
                 'success' => false,

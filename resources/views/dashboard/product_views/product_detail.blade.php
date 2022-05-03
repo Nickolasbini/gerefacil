@@ -1,5 +1,4 @@
-@include('dashboard/master')
-@include('dashboard/view_message')
+@include('master_head')
 
 @if(!$admin)
     @include('header-menu', ['enableSearch' => \App\Helpers\Functions::viewLink('/')])
@@ -65,7 +64,7 @@
                     <a class="btn btn-secondary" id="searchForShipment"><img class="small-icon" src="{{asset('images/add-icon.webp')}}" alt="calculate shipment again"></a>
                 </div>
                 <div class=" d-flex flex-column row">
-                    <a class="btn btn-success col-sm-10 col-md-6 m-auto mt-3 mb-3"><?= ucfirst(translate('proceed to purchase')) ?></a>
+                    <a class="btn btn-primary col-sm-10 col-md-6 m-auto mt-3 mb-3 add-to-cart"><?= ucfirst(translate('add to cart')) ?></a>
                     <a class="btn btn-secondary col-sm-10 col-md-6 m-auto mt-3 mb-3" onclick="openModal(true, 'master-modal')"><?= ucfirst(translate('decline purchase')) ?></a>
                 </div>
             </div>
@@ -121,7 +120,7 @@
                         </p>
                     @endif
                 </div>
-                <a class="btn btn-dark w-100 opacity-hover" href="{{\App\Helpers\Functions::viewLink('product/detail/'.$product->id)}}"><?= ucfirst(translate('add to cart')) ?></a>
+                <a class="btn btn-dark w-100 opacity-hover add-to-cart"><?= ucfirst(translate('add to cart')) ?></a>
             </div>        
         </section>
     </x-app-layout>
@@ -177,7 +176,7 @@
             </div>
             <div class="row col-sm-10 col-md-8 m-auto">
                 <a id="calculate-shipment" class="btn btn-secondary opacity-hover mt-3 mb-3"><?= ucfirst(translate('calculate shipment')) ?></a>
-                <a class="btn btn-primary opacity-hover mt-3 mb-3" id="add-to-cart"><?= ucfirst(translate('add to cart')) ?></a>
+                <a class="btn btn-primary opacity-hover mt-3 mb-3 add-to-cart"><?= ucfirst(translate('add to cart')) ?></a>
             </div>
         </div>        
     </section>
@@ -293,7 +292,7 @@
 
     var orderId   = "{{$orderId}}"
     var productId = "{{$product->id}}"
-    $('#add-to-cart').on('click', function(){
+    $('.add-to-cart').on('click', function(){
         openLoader();
         $.ajax({
             url: "{{ \App\Helpers\Functions::viewLink('productorder/additem') }}",
@@ -301,7 +300,8 @@
             data: {orderId: orderId, productId: productId},
             dataType: 'JSON',
             success: function(result){
-
+                addMessageToToast(result.message);
+                openModal(true);
             },
             complete: function(){
                 openLoader(true);
