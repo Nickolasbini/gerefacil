@@ -27,9 +27,13 @@ class SaleController extends Controller
     */
     public function list()
     {
-        $selectedStatus = $this->getParameter('status', '');
+        $selectedStatus = $this->getParameter('status', 0);
         $orderObj = new Order();
-        $orders = $orderObj->getAllCustomersOrders($selectedStatus);
+        $parameters = [
+            'criteria' => ($selectedStatus >= 0 && $selectedStatus <= 5 ? 'status' : ''),
+            'value'    => $selectedStatus
+        ];
+        $orders = $orderObj->getAllCustomersOrders($parameters);
         $orderObj->insertProductOrderInventoryToOrderObj($orders);
         return view('dashboard/sale_views/sale_home')->with([
             'orders'         => $orders,

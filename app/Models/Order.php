@@ -28,6 +28,7 @@ class Order extends Model {
     ];
 
     const STATUS_ARRAY = [
+        0 => 'empty order',
         1 => 'order created',
         2 => 'awaiting payment confirmation',
         3 => 'sent to delivery',
@@ -212,6 +213,7 @@ class Order extends Model {
     {
         $status = $this->status;
         $correspondentColor = [
+            0 => 'secondary',
             1 => 'info',
             2 => 'warning',
             3 => 'info',
@@ -223,19 +225,24 @@ class Order extends Model {
         return $correspondentColor[$status];
     }
 
-    public function getAllCustomersOrders($parameters = [])
+    public function getAllCustomersOrders($parameters = [], $limit = 10)
     {
-        if(count($parameters) == 0)
-            return Order::where('id', '>', '0')->get();
+        if(!is_array($parameters) || count($parameters) == 0)
+            return Order::where('id', '>', '0')->paginate($limit);
         $criteria = (array_key_exists('criteria', $parameters) ? $parameters['criteria'] : null);
-        $values   = (array_key_exists('values', $parameters)   ? $parameters['values']   : null);
-        if(!$criteria || !$values)
-            return Order::where('id', '>', '0')->get();
+        $value    = (array_key_exists('value'   , $parameters) ? $parameters['value']    : null);
+        if(!$criteria || !$value)
+            return Order::where('id', '>', '0')->paginate($limit);
+        switch($criteria){
+            case 'status':
+                return Order::where('id', '>', '0')->where('status', '=', $value)->paginate($limit);
+            break;
+            case 'datePeriod':
 
-        if(is_array($datePeriod))
-            return Order::where('id', '>', '0')->where('status', '=', $status)->get();
-        if($status)
-            return Order::where('id', '>', '0')->where('status', '=', $status)->get();
-        return Order::where('id', '>', '0')->get();
+            break;
+            default:
+                return Order::where('id', '>', '0')->paginate($limit);
+            break;
+        }
     }
 }
