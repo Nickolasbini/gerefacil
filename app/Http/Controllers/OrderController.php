@@ -199,6 +199,41 @@ class OrderController extends Controller
             'number'  => $total
         ]);
     }
+
+    // change the status of sent Order id to sent status
+    public function updateStatus()
+    {
+        $orderId = $this->getParameter('orderId');
+        $status  = $this->getParameter('status');
+        if(!$orderId || !$status){
+            return json_encode([
+                'success' => false,
+                'message' => 'missing parameters',
+                'status'  => null
+            ]);
+        }
+        $orderObj = Order::find($orderId);
+        if(!$orderObj){
+            return json_encode([
+                'success' => false,
+                'message' => 'order not found',
+                'status'  => null
+            ]);
+        }
+        $result = $orderObj->updateStatus($status);
+        if(!$result){
+            return json_encode([
+                'success' => false,
+                'message' => ucfirst(translate('an error occured, try again please')),
+                'status'  => null
+            ]);
+        }
+        return json_encode([
+            'success' => false,
+            'message' => ucfirst(translate('order status updated')),
+            'status'  => $orderObj->status
+        ]);
+    }
 }
 
 ?>

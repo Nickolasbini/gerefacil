@@ -2247,3 +2247,9 @@ select {
 .secondary-color{
     color: #6875F5;
 }
+.primary-color-forced{
+    color: #fff!important;
+}
+.secondary-color-forced{
+    color: #6875F5!important;
+}

@@ -6,17 +6,33 @@
             <?= ucfirst(translate('my sales')); ?>
         </h2>
     </x-slot>
-    <section id="purchases" class="container mt-t mb-t p-4">
+    <section id="purchases" class="col-sm-10 col-md-6 m-auto row p-2">
         <div class="mt-5 mb-5 bg-primary-color shadow p-3 rounded">
-            <div>
-                date filter
+            <p class="h4">
+                {{ ucfirst(translate('date period')) }}
+            </p>
+            <div class="d-flex justify-content-between mt-3 mb-3">
+                <div class="col-4">
+                    <input id="from" type="date" class="form-control rounded" value="{{$from}}">
+                </div>
+                <div class="col-4">
+                    <input id="to" type="date" class="form-control rounded" value="{{$to}}">
+                </div>
             </div>
+            <p class="h4">
+                {{ ucfirst(translate('status')) }}
+            </p>
             <select name="status" id="statusSelector" class="form-control mt-2 mb-2">
                 @foreach($status as $statusId => $statusTranslation)
                     {{ $selected = ($statusId == $selectedStatus) ? 'selected' : ''}}
                     <option value="{{$statusId}}" {{$selected}}>{{$statusTranslation}}</option>
                 @endforeach
             </select>
+            <div class="d-flex justify-content-center p-2">
+                <a id="filter" class="btn btn-secondary opacity-hover p-3 rounded secundary-color rounded">
+                    {{ ucfirst(translate('filter')) }}
+                </a>
+            </div>
         </div>
         @if($orders->count() > 0)
             @foreach($orders as $order)
@@ -24,6 +40,21 @@
                     <div class="order-data row">
                         <?php $hasProducts = (count($order->productDetails) > 0 ? true : false) ?>
                         @if($hasProducts)
+                            <?php $nextStatus = $order->getNextStatusTranslated() ?>
+                            @if($nextStatus)
+                                <div class="mt-2 mb-5 d-flex justify-content-between border-b pb-3 wrapper-of-next-status">
+                                    <div class="form-check">
+                                        <input class="form-check-input nextStatus" type="checkbox" value="{{$order->getNextStatusNumber()}}" id="label-ofNewStatus">
+                                        <label class="form-check-label" for="label-ofNewStatus">
+                                            {{$nextStatus}}
+                                        </label>
+                                    </div>
+                                    <div class="button-of-next-status" style="display: none;">
+                                        <a class="save-new-status btn btn-success" data-orderId="{{$order->id}}">{{ucfirst(translate('save new status'))}}</a>
+                                    </div>
+                                </div>
+                            @endif
+                            <div class="w-100 text-right h6 mb-4">{{\App\Helpers\Functions::formatDate($order->productDetails[0]['updated_at'])}}</div>
                             <div class="col-md-6">
                                 <img class="img-fluid rounded" src="{{$order->productDetails[0]['productPhoto']}}">
                             </div>
@@ -40,7 +71,7 @@
                             </div>
                         @else
                             <p class="h5">
-                                No products!
+                                {{ucfirst(translate('no products!'))}}
                             </p>
                         @endif
                     </div>
@@ -95,11 +126,64 @@
     });
 
     var basePath = "{{\App\Helpers\Functions::viewLink('dashboard/sale/list')}}";
+    var urlParameters = {
+        status: "{{$selectedStatus}}",
+        from  : "{{$from}}",
+        to    : "{{$to}}"   
+    }
     $('#statusSelector').on('change', function(){
-        var value = $(this).val();
-        basePath += '?status=' + value;
-        window.location.href = basePath;
+        urlParameters['status'] = $(this).val();
     });
+    $('#from').on('change', function(){
+        $('#to').attr('min', $(this).val());
+    });
+    $('#to').on('change', function(){
+        $('#from').attr('max', $(this).val());
+    });
+
+    $('#filter').on('click', function(){
+        var fromDate = $('#from').val();
+        var toDate   = $('#to').val();
+        var status   = $('#statusSelector').val();
+        urlParameters['from']   = fromDate;
+        urlParameters['to']     = toDate;
+        urlParameters['status'] = status;
+        sendParametersAndReload();
+    });
+
+    function sendParametersAndReload(){
+        var url = basePath + '/' + urlParameters['status'] + '/' + urlParameters['from'] + '/' + urlParameters['to'];
+        window.location.href = url;
+    }
+
+    $('.nextStatus').on('click', function(){
+        var parentTag = $(this).parents('.wrapper-of-next-status');
+        if($(this).is(':checked') == true){
+            parentTag.find('.button-of-next-status').show();
+        }else{
+            parentTag.find('.button-of-next-status').hide();
+        }
+    });
+
+    $('.save-new-status').on('click', function(){
+        var orderId = $(this).attr('data-orderId');
+        if(saveStatus(orderId) == true){
+            $(this).parents('.order-wrapper').remove();
+        }
+        return;
+    });
+
+    function saveStatus(orderId, status){
+        openLoader();
+        $.ajax({
+            url: "{{ \App\Helpers\Functions::viewLink('dashboard/order/updatestatus') }}",
+            method: 'GET',
+            success: function(result){
+                openLoader(true);
+                return result.success;
+            }
+        });
+    }
 </script>
 
 <style>

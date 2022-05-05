@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Functions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -184,7 +185,8 @@ class Order extends Model {
                 'productName'  => $productName,
                 'unitaryPrice' => $productPrice,
                 'parcialSum'   => $productOrder->totalSum,
-                'quantity'     => $productOrder->quantity
+                'quantity'     => $productOrder->quantity,
+                'updated_at'   => $productOrder->updated_at
             ];
         }
         return $response;
@@ -192,7 +194,7 @@ class Order extends Model {
 
     public function getAllStatusTranslated()
     {
-        $response[''] = ucfirst(translate('all status'));
+        $response = [];
         $allStatus = $this::STATUS_ARRAY;
         foreach($allStatus as $statusNumber => $status){
             $response[$statusNumber] = ucfirst(translate($status));
@@ -204,6 +206,24 @@ class Order extends Model {
     {
         $allStatus = $this::STATUS_ARRAY;
         $status    = $this->status;
+        if(!array_key_exists($status, $allStatus))
+            return null;
+        return ucfirst(translate($allStatus[$status]));
+    }
+
+    public function getNextStatusNumber()
+    {
+        $allStatus = $this::STATUS_ARRAY;
+        $status    = $this->status + 1;
+        if(!array_key_exists($status, $allStatus))
+            return null;
+        return $status;
+    }
+
+    public function getNextStatusTranslated()
+    {
+        $allStatus = $this::STATUS_ARRAY;
+        $status    = $this->status + 1;
         if(!array_key_exists($status, $allStatus))
             return null;
         return ucfirst(translate($allStatus[$status]));
@@ -229,20 +249,28 @@ class Order extends Model {
     {
         if(!is_array($parameters) || count($parameters) == 0)
             return Order::where('id', '>', '0')->paginate($limit);
-        $criteria = (array_key_exists('criteria', $parameters) ? $parameters['criteria'] : null);
-        $value    = (array_key_exists('value'   , $parameters) ? $parameters['value']    : null);
-        if(!$criteria || !$value)
-            return Order::where('id', '>', '0')->paginate($limit);
-        switch($criteria){
-            case 'status':
-                return Order::where('id', '>', '0')->where('status', '=', $value)->paginate($limit);
-            break;
-            case 'datePeriod':
+        $status = (array_key_exists('status', $parameters) ? $parameters['status'] : null);
+        $from   = (array_key_exists('from', $parameters)   ? $parameters['from']   : null);
+        $to     = (array_key_exists('to', $parameters)     ? $parameters['to']     : null);
 
-            break;
-            default:
-                return Order::where('id', '>', '0')->paginate($limit);
-            break;
-        }
+        if(!is_numeric($status))
+            return Order::where('id', '>', '0')->paginate($limit);
+        if($status && (!$from || !$to))
+            return Order::where('id', '>', '0')->where('status', '=', $status)->paginate($limit);
+        if(!$status && ($from && $to))
+            return Order::where('id', '>', '0')->where('status', '=', $status)->whereBetween('updated_at', [$from, $to])->paginate($limit);
+        if($status && $from && $to)
+            return Order::where('id', '>', '0')->where('status', '=', $status)->whereBetween('updated_at', [$from, $to])->paginate($limit);
+        return Order::where('status', '=', $status)->paginate($limit);
+    }
+
+    public function updateStatus($status = null)
+    {
+        $allStatus = $this::STATUS_ARRAY;
+        $status    = ($status ? $status : $this->getNextStatusNumber());
+        if(!array_key_exists($status, $allStatus))
+            return false;
+        $this->status = $status;
+        return $this->save();
     }
 }

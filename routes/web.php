@@ -82,7 +82,7 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
 
     // sale routes
     Route::get('sale/save', 'SaleController@save')->name('sale.save');
-    Route::get('sale/list', 'SaleController@list')->name('sale.list');
+    Route::get('sale/list/{status?}/{from?}/{to?}', 'SaleController@list')->name('sale.list');
 
     // message routes
     Route::get('message/save', [MessageController::class, 'save']);
@@ -99,6 +99,7 @@ Route::prefix('dashboard')->middleware(['master', 'auth:sanctum', 'verified', 'a
     Route::post('order/additem', 'OrderController@addItem')->name('order.additem');
     Route::get('order/mycart', 'OrderController@listAdmCartList')->name('order.mycart');
     Route::post('order/getnumberofproducts', 'OrderController@getNumberOfProductsOnOrder')->name('order.getnumberofproducts');
+    Route::post('order/updatestatus', 'OrderController@updateStatus')->name('order.updatestatus');
 });
 
 // authenticated routes without prefix 

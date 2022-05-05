@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use Carbon\Carbon;
 
 class SaleController extends Controller
 {
@@ -25,20 +26,26 @@ class SaleController extends Controller
      * 
      * @return view
     */
-    public function list()
+    public function list($status = null, $from = null, $to = null)
     {
-        $selectedStatus = $this->getParameter('status', 0);
         $orderObj = new Order();
         $parameters = [
-            'criteria' => ($selectedStatus >= 0 && $selectedStatus <= 5 ? 'status' : ''),
-            'value'    => $selectedStatus
+            'status' => $status,
+            'from'   => $from,
+            'to'     => $to
         ];
+        if($from && !$to)
+            $parameters['to']   = Carbon::now()->format('Y-m-d');
+        if(!$from && $to)
+            $parameters['from'] = $parameters['to']; 
         $orders = $orderObj->getAllCustomersOrders($parameters);
         $orderObj->insertProductOrderInventoryToOrderObj($orders);
         return view('dashboard/sale_views/sale_home')->with([
             'orders'         => $orders,
             'status'         => $orderObj->getAllStatusTranslated(),
-            'selectedStatus' => $selectedStatus
+            'selectedStatus' => $parameters['status'],
+            'from'           => $parameters['from'],
+            'to'             => $parameters['to']
         ]);
     }
 
