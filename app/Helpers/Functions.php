@@ -202,4 +202,43 @@ class Functions
         }
         return json_decode(file_get_contents($filePath), true);
     }
+
+    /**
+     * Stores sent string into the $fileName file located at the storage_path/logs/dtfs dir
+     * 
+     * @param  String the string value to store - required
+     * @param  String the file name             - default: 'debug.txt'
+     * @return Nill
+    */
+    public static function dtf($stringToStore, $fileName = 'debug')
+    {
+        $fileName = $fileName . '.txt';
+        $path = storage_path('logs/dtfs');
+        if(!is_dir($path))
+            mkdir($path);
+        $path = $path . '/' . $fileName;
+        if(!file_exists($path))
+            file_put_contents($path, '');
+        $data  = file_get_contents($path);
+        $data .= $stringToStore;
+        file_put_contents($path, $data . "\n\r\n\r");
+    }
+
+    /**
+     * Removes all files located at the storage_path/logs/dtfs dir
+     * 
+     * @return Nill
+    */
+    public static function clearDtf()
+    {
+        $dir = storage_path('logs/dtfs');
+        if(!is_dir($dir))
+            return;
+        $filesOnDir = scandir($dir);
+        foreach($filesOnDir as $file){
+            $dirFilePath = $dir . '/' . $file;
+            if(!is_dir($dirFilePath) && file_exists($dirFilePath))
+                unlink($dirFilePath);
+        }
+    }
 }
