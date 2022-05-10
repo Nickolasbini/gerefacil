@@ -220,6 +220,13 @@ class OrderController extends Controller
                 'status'  => null
             ]);
         }
+        if($status != $orderObj->getNextStatusNumber()){
+            return json_encode([
+                'success' => false,
+                'message' => 'invalid status',
+                'status'  => null
+            ]);
+        }
         $result = $orderObj->updateStatus($status);
         if(!$result){
             return json_encode([

@@ -6,7 +6,7 @@
             <?= ucfirst(translate('my orders')); ?>
         </h2>
     </x-slot>
-    <section id="purchases" class="container mt-t mb-t p-4">
+    <section id="purchases" class="col-sm-10 col-md-6 m-auto row p-2">
         <select name="status" id="statusSelector" class="form-control mt-2 mb-2">
             @foreach($status as $statusId => $statusTranslation)
                 {{ $selected = ($statusId == $selectedStatus) ? 'selected' : ''}}
@@ -18,17 +18,20 @@
                 <div class="order-wrapper p-3 mt-3 mb-3 rounded shadow">
                     <div class="order-data row">
                         <div class="col-md-6">
-                            <img class="img-fluid rounded" src="{{$order->productDetails[0]['productPhoto']}}">
+                            <?php $productPhoto = ($order->productsDetails && is_array($order->productDetails) ? $order->productDetails[0]['productPhoto'] : null) ?>
+                            <img class="img-fluid rounded" src="{{$productPhoto}}">
                         </div>
                         <div class="col-md-6 d-flex flex-column justify-content-around text-right">
                             <p class="h5 border-b">
-                                Valor: {{\App\Helpers\Functions::formatMoney($order->productDetails[0]['parcialSum'])}} 
+                                <?php $partialSum = ($order->productsDetails && is_array($order->productDetails) ? $order->productDetails[0]['parcialSum'] : 0.0) ?>
+                                Valor: {{\App\Helpers\Functions::formatMoney($partialSum)}}
                             </p>
                             <p class="h5 border-b">
                                 Valor frete: {{\App\Helpers\Functions::formatMoney($order->shippingPrice)}}
                             </p>
                             <p class="h5 border-b">
-                                Quantidade: {{$order->productDetails[0]['quantity']}} <small>|un</small>
+                                <?php $quantity = ($order->productsDetails && is_array($order->productDetails) ? $order->productDetails[0]['quantity'] : 0) ?>
+                                Quantidade: {{$quantity}} <small>|un</small>
                             </p>
                         </div>
                     </div>

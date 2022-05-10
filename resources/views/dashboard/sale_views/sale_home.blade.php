@@ -42,17 +42,19 @@
                         @if($hasProducts)
                             <?php $nextStatus = $order->getNextStatusTranslated() ?>
                             @if($nextStatus)
-                                <div class="mt-2 mb-5 d-flex justify-content-between border-b pb-3 wrapper-of-next-status">
-                                    <div class="form-check">
-                                        <input class="form-check-input nextStatus" type="checkbox" value="{{$order->getNextStatusNumber()}}" id="label-ofNewStatus">
-                                        <label class="form-check-label" for="label-ofNewStatus">
-                                            {{$nextStatus}}
-                                        </label>
+                                @if($order->getNextStatusNumber() < 5)
+                                    <div class="mt-2 mb-5 d-flex justify-content-between border-b pb-3 wrapper-of-next-status">
+                                        <div class="form-check">
+                                            <input class="form-check-input nextStatus" type="checkbox" value="{{$order->getNextStatusNumber()}}" id="label-ofNewStatus-{{$order->id}}">
+                                            <label class="form-check-label" for="label-ofNewStatus-{{$order->id}}">
+                                                {{$nextStatus}}
+                                            </label>
+                                        </div>
+                                        <div class="button-of-next-status" style="display: none;">
+                                            <a class="save-new-status btn btn-success" data-orderId="{{$order->id}}" data-statusNumber="{{$order->getNextStatusNumber()}}">{{ucfirst(translate('save new status'))}}</a>
+                                        </div>
                                     </div>
-                                    <div class="button-of-next-status" style="display: none;">
-                                        <a class="save-new-status btn btn-success" data-orderId="{{$order->id}}">{{ucfirst(translate('save new status'))}}</a>
-                                    </div>
-                                </div>
+                                @endif
                             @endif
                             <div class="w-100 text-right h6 mb-4">{{\App\Helpers\Functions::formatDate($order->productDetails[0]['updated_at'])}}</div>
                             <div class="col-md-6">
@@ -166,8 +168,9 @@
     });
 
     $('.save-new-status').on('click', function(){
-        var orderId = $(this).attr('data-orderId');
-        if(saveStatus(orderId) == true){
+        var orderId      = $(this).attr('data-orderId');
+        var statusNumber = $(this).attr('data-statusNumber');
+        if(saveStatus(orderId, statusNumber) == true){
             $(this).parents('.order-wrapper').remove();
         }
         return;
@@ -175,14 +178,21 @@
 
     function saveStatus(orderId, status){
         openLoader();
+        var valueToReturn = false;
         $.ajax({
             url: "{{ \App\Helpers\Functions::viewLink('dashboard/order/updatestatus') }}",
-            method: 'GET',
+            method: 'POST',
+            data: {orderId: orderId, status: status},
+            dataType: 'JSON',
             success: function(result){
+                addCustomMessage(result.message);
+                valueToReturn = result.success;
+            },
+            complete: function(){
                 openLoader(true);
-                return result.success;
             }
         });
+        return valueToReturn;
     }
 </script>
 

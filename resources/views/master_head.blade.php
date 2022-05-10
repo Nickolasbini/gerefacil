@@ -43,7 +43,7 @@
         </div>
     </div>
 
-    <div id="left-side-bar" class="position-absolute w-25 left-side-bar border-r shadow" style="display:none;">
+    <div id="left-side-bar" class="position-absolute w-25 left-side-bar border-r shadow sticky-left" style="display:none;">
         <div class="container p2 mt-5">
             <div class="w-100 text-right">
                 <a class="opacity-hover cursor-pointer primary-color" onclick="openLeftSideBar(true)">X</a>
@@ -58,7 +58,7 @@
         <a class="opacity-hover cursor-pointer secondary-color">V</a>
     </div>
 
-    <div id="right-side-bar" class="position-absolute w-25 right-side-bar border-l shadow" style="display:none;">
+    <div id="right-side-bar" class="position-absolute w-25 right-side-bar border-l shadow sticky-right" style="display:none;">
         <div class="container p2 mt-5">
             <div class="w-100 text-right">
                 <a class="opacity-hover cursor-pointer primary-color" onclick="openRightSideBar(true)">X</a>
@@ -256,5 +256,16 @@
     .small-icon{
         width: 1.5em;
         height: 1.5em;
+    }
+
+    .sticky-left{
+        position: sticky !important;
+        float: left;
+        height: 100vh;
+    }
+    .sticky-right{
+        position: sticky !important;
+        float: right;
+        height: 100vh;
     }
 </style>
