@@ -137,7 +137,7 @@ class Product extends Model {
         $result = [
             'weight' => $weight,
             'length' => $length,
-            'height' => $height,
+            'height' => ($height > 10 ? $height : 10),
             'width'  => $width,
             //'nVlDiametro' => $diameter
         ];
