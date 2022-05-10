@@ -79,6 +79,10 @@ class AuthenticatedUserActions extends \App\Http\Controllers\Controller
         if($requestURI == '/dashboard'){
             return true;
         }
+        // partial url exception
+        if(is_numeric((strpos($requestURI, '/order/pay?orderId=')))){
+            return;
+        }
         // check the exception
         if(in_array($requestURI, $exceptionsForNonAdmins)){
             return;

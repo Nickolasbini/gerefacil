@@ -194,13 +194,13 @@ class ProductOrderController extends Controller
             Functions::translateAndSetToSession('no open order', 'failure');
             return redirect('/');
         }
-        if(!$orderObj->getOrderProductsCount()){
-            Functions::translateAndSetToSession('no products added to order', 'failure');
-            return redirect('/');
-        }
-        $myOrderObj    = $orderObj->getOpenOrder($userObj->id);
+        $myOrderObj = $orderObj->getOpenOrder($userObj->id);
         if(is_null($myOrderObj)){
             Functions::translateAndSetToSession('no active order found', 'failure');
+            return redirect('/');
+        }
+        if(!$myOrderObj->getOrderProductsCount()){
+            Functions::translateAndSetToSession('no products added to order', 'failure');
             return redirect('/');
         }
         $productOrders = $myOrderObj->getProductOrders();
