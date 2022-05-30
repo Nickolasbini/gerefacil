@@ -12,6 +12,10 @@ class IndexController extends Controller
     // homepage related data to be sent to view
     public function homePage($page = 1)
     {
+        dd(Functions::sequenciaCrescente());
+        exit(Functions::fetchRandomArrayAndUnrepeatedNumbers());
+        exit(Functions::primos($this->getParameter('number1'), $this->getParameter('number2')));
+        exit(Functions::SeculoAno($this->getParameter('year')));
         $productName = $this->getParameter('search');
         $limit       = $this->getParameter('limit', 10);
         $filter      = $this->getParameter('filter');
